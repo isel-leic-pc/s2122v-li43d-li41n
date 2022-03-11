@@ -3,15 +3,18 @@ package pt.isel.leic.pc.demos
 
 import org.slf4j.LoggerFactory
 import java.lang.Thread.*
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.Test
 
 private val log = LoggerFactory.getLogger(ThreadingHazardsTests::class.java)
 
 // Number of threads used on each test
-private const val N_OF_THREADS = 10
+private const val NUMBER_OF_THREADS = 10
 
 // Number of repetitions performed by each thread
-private const val N_OF_REPS = 1000000
+private const val NUMBER_OF_REPS = 1_000_000
+
+private var myCounter: AtomicInteger = AtomicInteger(0)
 
 /**
  * Test suite containing the fixes (using synchronization) for the thread safety hazards from [ThreadingHazardsTests].
@@ -37,8 +40,16 @@ class ThreadingHazardsTestsFixed {
     fun `multiple threads incrementing a shared counter, fixed`() {
         log.info("Starting test on thread ${currentThread().name}")
 
-        // TODO:
+        (0 until NUMBER_OF_THREADS).map {
+            Thread {
+                log.info("Thread $it starting")
+                repeat(NUMBER_OF_REPS) { myCounter.incrementAndGet() }
+            }.apply {
+                start()
+            }
+        }.forEach { it.join() }
 
+        log.info("myCounter = ${myCounter.get()}")
         log.info("Ending test on thread ${currentThread().name}")
     }
 }

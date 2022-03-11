@@ -2,8 +2,7 @@
 package pt.isel.leic.pc.demos
 
 import org.slf4j.LoggerFactory
-import java.lang.Thread.currentThread
-import java.lang.Thread.sleep
+import java.lang.Thread.*
 import java.time.Duration
 import kotlin.test.Test
 
@@ -12,7 +11,8 @@ private val log = LoggerFactory.getLogger(ThreadingBasicsTests::class.java)
 private fun threadCode() {
     log.info("Function threadCode() running on thread ${currentThread().name}")
     // Simulate some "hard" work... ;)
-    sleep(Duration.ofSeconds(2).toMillis())
+    sleep(Duration.ofSeconds(4).toMillis())
+    log.info("Function threadCode() ending on thread ${currentThread().name}")
 }
 
 /**
@@ -23,36 +23,54 @@ class ThreadingBasicsTests {
     @Test
     fun `create, start and join with a thread`() {
         log.info("Starting test on thread ${currentThread().name}")
-
-        // TODO:
-
+        val thread = Thread(::threadCode)
+        thread.start()
+        thread.join()
         log.info("Ending test on thread ${currentThread().name}")
     }
 
     @Test
     fun `multiple threads, one function`() {
         log.info("Starting test on thread ${currentThread().name}")
-
-        // TODO:
+        val threads = listOf(
+            Thread(::threadCode),
+            Thread(::threadCode),
+            Thread(::threadCode)
+        )
+        threads.forEach { it.start() }
+        threads.forEach { it.join() }
 
         log.info("Ending test on thread ${currentThread().name}")
     }
 
     @Test
     fun `create thread using a lambda`() {
+        val someValue = 42
         log.info("Starting test on thread ${currentThread().name}")
 
-        // TODO:
+        val thread = Thread {
+            log.info("someValue = $someValue")
+            threadCode()
+        }
+        thread.start()
+        thread.join()
 
         log.info("Ending test on thread ${currentThread().name}")
+    }
+
+    class MySpecialThread : Thread() {
+        override fun run() {
+            log.info("MySpecialThread.run() thread ${currentThread().name}")
+            threadCode()
+        }
     }
 
     @Test
     fun `create thread using a derived class`() {
         log.info("Starting test on thread ${currentThread().name}")
-
-        // TODO:
-
+        val thread = MySpecialThread()
+        thread.start()
+        thread.join()
         log.info("Ending test on thread ${currentThread().name}")
     }
 }

@@ -2,7 +2,9 @@
 
 package pt.isel.leic.pc.imageviewer.filters
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toAwtImage
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import java.awt.image.BufferedImage
@@ -25,7 +27,27 @@ fun convertToGrayScaleMT(imageBitmap: ImageBitmap): ImageBitmap {
     println("Image size is: width = ${bufferedImage.width}; height = ${bufferedImage.height}")
 
     val elapsed = measureTimeMillis {
-        // TODO
+        (0 until EXPECTED_CORE_COUNT).map {
+            Thread {
+                val (xBounds, yBounds) = computePartitionBounds(
+                    width = bufferedImage.width,
+                    height = bufferedImage.height,
+                    partitionCount = EXPECTED_CORE_COUNT,
+                    partitionIndex = it
+                )
+
+                bufferedImage.applyTransform(xBounds, yBounds) {
+                    val grayscaleValue = it.luminance()
+                    Color(
+                        red = grayscaleValue,
+                        green = grayscaleValue,
+                        blue = grayscaleValue,
+                        colorSpace = it.colorSpace,
+                        alpha = it.alpha
+                    )
+                }
+            }.apply { start() }
+        }.forEach { it.join() }
     }
 
     val result = bufferedImage.toComposeImageBitmap()
