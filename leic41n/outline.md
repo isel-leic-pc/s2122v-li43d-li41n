@@ -16,4 +16,4 @@
   * shared - store globally or accessible through a closure   
 
 For reference: 
-  * Lecture video (in Portuguese) _(coming soon)_    
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=7THFvoKf7jk&list=PL8XxoCaL3dBgPaKjgP87uSmKZ1MsIZ4rr)

@@ -19,4 +19,4 @@
   * The need for synchronization: introduction
 
 For reference: 
-  * Lecture video (in Portuguese) _(coming soon)_    
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=M3sjLOJqC6w&list=PL8XxoCaL3dBiv-3pHZLbFGYsQiJa9X73o) 
