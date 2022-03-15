@@ -16,7 +16,7 @@ private fun threadCode() {
 }
 
 /**
- * Test suite containing
+ * Test suite containing examples of how to create, start and synchronize with thread termination.
  */
 class ThreadingBasicsTests {
 
@@ -58,6 +58,9 @@ class ThreadingBasicsTests {
         log.info("Ending test on thread ${currentThread().name}")
     }
 
+    /**
+     * We can define dedicated computations by deriving from [java.lang.Thread], like this.
+     */
     class MySpecialThread : Thread() {
         override fun run() {
             log.info("MySpecialThread.run() thread ${currentThread().name}")

@@ -52,9 +52,7 @@ class ThreadingHazardsTests {
             Thread {
                 log.info("Thread $it starting")
                 repeat(NUMBER_OF_REPS) { myCounter += 1 }
-            }.apply {
-                start()
-            }
+            }.apply(Thread::start)
         }.forEach { it.join() }
 
         log.info("myCounter = $myCounter")

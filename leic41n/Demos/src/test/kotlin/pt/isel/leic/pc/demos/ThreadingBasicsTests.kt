@@ -64,6 +64,9 @@ class ThreadingBasicsTests {
         log.info("Ending test on thread ${currentThread().name}")
     }
 
+    /**
+     * We can define dedicated computations by deriving from [java.lang.Thread], like this.
+     */
     class MyPreciousThread : Thread("MyPreciousThread") {
         override fun run() {
             threadCode()
