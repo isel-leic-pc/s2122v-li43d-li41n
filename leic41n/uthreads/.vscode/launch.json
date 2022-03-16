@@ -1,0 +1,45 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+    {
+        "name": "Launch Main",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/bin/main",
+        "args": [],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}",
+        "environment": [],
+        "externalConsole": false,
+        "MIMode": "gdb",
+        "setupCommands": [
+            {
+                "description": "Enable pretty-printing for gdb",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+            }
+        ],
+        "preLaunchTask": "Build Main"
+    },
+    {
+        "name": "Launch List Tests",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/bin/list_tests",
+        "args": [],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}",
+        "environment": [],
+        "externalConsole": false,
+        "MIMode": "gdb",
+        "setupCommands": [
+            {
+                "description": "Enable pretty-printing for gdb",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+            }
+        ],
+        "preLaunchTask": "Build List Tests"
+      },
+  ]
+}

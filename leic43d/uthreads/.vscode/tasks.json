@@ -1,0 +1,17 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Main",
+            "type": "shell",
+            "command": "make",
+            "group": "build"
+        },
+        {
+            "label": "Build List Tests",
+            "type": "shell",
+            "command": "make list",
+            "group": "test"
+        },
+    ]
+}
