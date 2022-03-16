@@ -7,6 +7,7 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.net.ServerSocket
 import java.net.Socket
+import java.util.concurrent.atomic.AtomicInteger
 
 private const val EXIT = "exit"
 private val logger = LoggerFactory.getLogger("SingleThreaded Echo Server")
@@ -14,12 +15,12 @@ private val logger = LoggerFactory.getLogger("SingleThreaded Echo Server")
 /**
  * Number of client sessions initiated during the server's current execution
  */
-private var sessionCount = 1
+private val sessionCount = AtomicInteger(0)
 
 /**
  * Creates a client session, incrementing the number of initiated sessions.
  */
-private fun createSession(): Int = sessionCount++
+private fun createSession(): Int = sessionCount.incrementAndGet()
 
 /**
  * The server's entry point.
@@ -32,7 +33,9 @@ fun main(args: Array<String>) {
         logger.info("Ready to accept connections")
         val sessionSocket = serverSocket.accept()
         logger.info("Accepted client connection. Remote host is ${sessionSocket.inetAddress}")
-        handleEchoSession(sessionSocket)
+        Thread {
+            handleEchoSession(sessionSocket)
+        }.start()
     }
 }
 

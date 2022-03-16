@@ -22,7 +22,7 @@ import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import pt.isel.leic.pc.imageviewer.filters.adjustBrightnessST
-import pt.isel.leic.pc.imageviewer.filters.convertToGrayScaleST
+import pt.isel.leic.pc.imageviewer.filters.convertToGrayScaleMT
 import java.io.File
 
 /**
@@ -105,7 +105,7 @@ fun MainWindowContent(
     val currentImage = remember(rememberKey) {
         println("Running block to remember with key = $rememberKey")
         imageBitmap?.let {
-            if (convertToGrayscale) convertToGrayScaleST(imageBitmap) else imageBitmap
+            if (convertToGrayscale) convertToGrayScaleMT(imageBitmap) else imageBitmap
         }
     }
 

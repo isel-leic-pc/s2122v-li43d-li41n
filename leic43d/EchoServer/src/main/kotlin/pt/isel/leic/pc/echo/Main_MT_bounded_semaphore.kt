@@ -7,6 +7,7 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.net.ServerSocket
 import java.net.Socket
+import java.util.concurrent.Semaphore
 
 private const val EXIT = "exit"
 private val logger = LoggerFactory.getLogger("SingleThreaded Echo Server")
@@ -28,11 +29,17 @@ fun main(args: Array<String>) {
     val port = if (args.isEmpty() || args[0].toIntOrNull() == null) 8000 else args[0].toInt()
     val serverSocket = ServerSocket(port)
     logger.info("Process id is = ${ProcessHandle.current().pid()}. Starting echo server at port $port")
+
+    val semaphore = Semaphore(2)
     while (true) {
         logger.info("Ready to accept connections")
         val sessionSocket = serverSocket.accept()
         logger.info("Accepted client connection. Remote host is ${sessionSocket.inetAddress}")
-        handleEchoSession(sessionSocket)
+        semaphore.acquire()
+        Thread {
+            handleEchoSession(sessionSocket)
+            semaphore.release()
+        }.start()
     }
 }
 

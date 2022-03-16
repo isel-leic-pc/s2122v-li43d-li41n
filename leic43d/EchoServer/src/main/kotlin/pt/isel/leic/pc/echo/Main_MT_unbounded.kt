@@ -32,7 +32,9 @@ fun main(args: Array<String>) {
         logger.info("Ready to accept connections")
         val sessionSocket = serverSocket.accept()
         logger.info("Accepted client connection. Remote host is ${sessionSocket.inetAddress}")
-        handleEchoSession(sessionSocket)
+        Thread {
+            handleEchoSession(sessionSocket)
+        }.start()
     }
 }
 

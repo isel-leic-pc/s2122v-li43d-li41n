@@ -19,7 +19,7 @@ private var sessionCount = 1
 /**
  * Creates a client session, incrementing the number of initiated sessions.
  */
-fun createSession(): Int = sessionCount++
+private fun createSession(): Int = sessionCount++
 
 /**
  * The server's entry point.
@@ -39,7 +39,7 @@ fun main(args: Array<String>) {
 /**
  * Serves the client connected to the given [Socket] instance
  */
-fun handleEchoSession(sessionSocket: Socket) {
+private fun handleEchoSession(sessionSocket: Socket) {
     val sessionId = createSession()
     var echoCount = 0
     sessionSocket.use {
@@ -52,7 +52,7 @@ fun handleEchoSession(sessionSocket: Socket) {
             if (line == EXIT)
                 break
             logger.info("Received line number '${++echoCount}'. Echoing it.")
-            output.println("Echo: $line")
+            output.println("($echoCount) Echo: $line")
         }
         output.println("Bye!")
     }
