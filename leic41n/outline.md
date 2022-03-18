@@ -38,23 +38,15 @@ For reference:
 For reference: 
   * Lecture video (in Portuguese) __(coming soon)__ 
 
-### 17/03/2022 - Creating a user mode multi-threading runtime: uthreads - Script
-* Development environment setup
-  * https://code.visualstudio.com/docs/remote/containers
-  * Demo: Describe starting project and execute it
+### 17/03/2022 - Creating a user mode multi-threading runtime: uthreads
 * Operating system constructs that enable program execution
   * Process
   * Thread (revisited)
-* Demo: simultaneous executions of the same program
-  * Display variable addresses in both processes
-  * Refer [ASLR](https://en.wikipedia.org/wiki/Address_space_layout_randomization)
-  * Disable it with `setarch -R ./bin/main`, and there you go: virtual memory FTW
-* UThreads - Let us begin =)
-  * uthread and context switch concepts
-  * Demo: Lets show these concepts through code
-    * Step 1 - start by implementing the demo orchestration code
-    * Step 2 - define uthread and signature for prepare_thread and context_switch
-    * Step 3 - implement context_switch
-    * Step 4 - implement prepare_thread and try it out =)
-  * cooperative and preemptive runtimes (concept)
-  * scheduling concept
+* The uthreads runtime
+  * Purpose and motivation
+  * Demo: implementation of a context-switch in the uthreads runtime
+* Cooperative and preemptive runtimes (concept)
+
+For reference:
+  * [Development environment setup](https://code.visualstudio.com/docs/remote/containers)
+  * Lecture video (in Portuguese) __(coming soon)__ 
