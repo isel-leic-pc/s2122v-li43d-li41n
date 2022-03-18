@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
-import pt.isel.leic.pc.imageviewer.filters.adjustBrightnessST
+import pt.isel.leic.pc.imageviewer.filters.adjustBrightnessMT
 import pt.isel.leic.pc.imageviewer.filters.convertToGrayScaleMT
 import java.io.File
 
@@ -113,7 +113,7 @@ fun MainWindowContent(
     if (currentImage != null) {
 
         val (current, isFinalValue) = brightness.value
-        val imageToDisplay = if (isFinalValue) adjustBrightnessST(currentImage, current) else currentImage
+        val imageToDisplay = if (isFinalValue) adjustBrightnessMT(currentImage, current) else currentImage
         println("Composition of Image starts")
         Image(imageToDisplay, "", modifier = Modifier.weight(1.0f).align(Alignment.CenterHorizontally))
         println("Composition of Image ends")

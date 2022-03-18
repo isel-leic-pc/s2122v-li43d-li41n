@@ -1,19 +1,64 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
-extern int add_asm(int, int);
+#define STACK_SIZE (8 * 4096)
+typedef struct uthread {
+    uint64_t rsp;
+    uint8_t stack[STACK_SIZE];
+} uthread_t;
 
-// X86-64 calling conventions
-// https://en.wikipedia.org/wiki/X86_calling_conventions
+typedef struct uthread_context {
+    uint64_t r15;
+    uint64_t r14;
+    uint64_t r13;
+    uint64_t r12;
+    uint64_t rbx;
+    uint64_t rbp;
+    void (*ret_address)();
+} uthread_context_t;
 
-int main(int argc, char *argv[]) {
-    // No args verification. This crashes big time ;)
-    int arg1 = atoi(argv[1]), arg2 = atoi(argv[2]);
-    int result = add_asm(arg1, arg2);
-    printf("add_asm(%d, %d) = %d\n", arg1, arg2, result);
-    printf("Result's address is %p", (void*) &result);
-    puts("\nPress any key to finish");
-    getchar();
-    printf("Lets look at the address of result again: %p\n", (void*) &result);
+extern void context_switch(uthread_t* pthread_out, uthread_t* pthread_in);
+
+uthread_t thread1;
+uthread_t thread2;
+
+uthread_t main_thread;
+
+void ut_prepare(uthread_t* pthread, void (*thread_code)()) {
+    uthread_context_t* pctx = (uthread_context_t*)
+        ((pthread->stack + STACK_SIZE) - sizeof(uthread_context_t));
+    pctx->rbp = 0;
+    pctx->ret_address = thread_code;
+    pthread->rsp = (uint64_t) pctx;
+}
+
+void thread1_code() {
+    puts("T1: step 1");
+    context_switch(&thread1, &thread2);
+    puts("T1: step 2");
+    context_switch(&thread1, &thread2);
+    puts("T1: step 3");
+    context_switch(&thread1, &thread2);
+}
+
+void thread2_code() {
+    puts("T2: step 1");
+    context_switch(&thread2, &thread1);
+    puts("T2: step 2");
+    context_switch(&thread2, &thread1);
+    puts("T3: step 3");
+    context_switch(&thread1, &main_thread);
+}
+
+int main() {
+
+    puts("main: And so it begins");
+    ut_prepare(&thread1, thread1_code);
+    ut_prepare(&thread2, thread2_code);
+
+    context_switch(&main_thread, &thread1);
+    puts("main: the end is near");
+
     return 0;
 }
