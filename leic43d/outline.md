@@ -55,23 +55,29 @@ For reference:
   * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=ddRqJ3HcLOo&list=PL8XxoCaL3dBiv-3pHZLbFGYsQiJa9X73o&index=2)
 
 ## Week 3   
-### 22/03/2022 - Creating a user mode multi-threading runtime: uthreads (Script)  
+### 22/03/2022 - Creating a user mode multi-threading runtime: uthreads
+* Fundamental concepts of multi-thread runtimes
+  * Ready queue
+  * Running thread
+  * Scheduling
 * The _uthreads_ runtime, continued
   * Adding scheduling support
-0. Separate _uthreads_' code from application's code
-1. _uthreads_ shouldn't have to know about other _uthreads_
-   1. Add dynamic allocation of _uthreads_ (`ut_create`)
-   2. Ready queue and running thread
-   3. Revisit special case of `main_uthread` and its lifecycle: `ut_init`, `ut_run` and `ut_end`
-   4. New concurrency model for _uthreads_: `ut_yield` and `ut_exit`
-   5. Revisit code separation between _uthreads_ library and application
-2. Fixing the existing memory leak: `internal_exit`
-3. Improving the programming model:
-   1. No need to explicitly call `ut_exit`
-   2. Passing arguments to the functions that define the behaviour of _uthreads_
+  * Demo: materialization of the afore mentioned concepts on the _uthreads_ runtime
+
+For reference:
+  * Lecture video (in Portuguese) _(coming soon)_
 
 ### 24/03/2022 - Creating a user mode multi-threading runtime: uthreads (Script)  
 * The _uthreads_ runtime, conclusion
+  * Completing scheduling support
   * Thread states: sleep, wait and ready
-    
-(to be continued)
+  * Synchronizer concept, revisited
+1. Completing scheduling support implementation
+   1. Fixing the existing memory leak: `internal_exit`
+   2. Improving the programming model:
+      1. No need to explicitly call `ut_exit`
+      2. Passing arguments to the functions that define the behaviour of _uthreads_
+2. Add support for _uthreads_ to temporarily relinquish the right to execute: `ut_sleep`
+   1. Add a global sleep queue
+   2. Change `ut_yield` so that termination only occurs after ALL _uthreads_ terminate
+3. Implementation of an _uthreads_ synchronizer (i.e. count down latch)

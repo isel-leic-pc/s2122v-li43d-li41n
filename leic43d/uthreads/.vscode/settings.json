@@ -3,6 +3,7 @@
         "list.h": "c",
         "stdlib.h": "c",
         "compare": "c",
-        "type_traits": "c"
+        "type_traits": "c",
+        "uthread.h": "c"
     }
 }

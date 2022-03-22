@@ -1,6 +1,6 @@
-main: src/main.c src/ctx_switch.s
+main: src/main.c src/ctx_switch.s src/uthread.c
 	mkdir -p bin
-	gcc -Wall -pedantic -g -o bin/main src/main.c src/ctx_switch.s
+	gcc -Wall -pedantic -g -o bin/main src/uthread.c src/main.c src/ctx_switch.s
 
 add: src/add_main.c src/add_asm.s
 	mkdir -p bin
