@@ -7,6 +7,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stddef.h>
 
 /**
  * Macro used to compute an offset for the field 'field' in an instance of type 'type' 
@@ -59,6 +60,34 @@ inline void insert_at_list_head(list_entry_t * head, list_entry_t * entry) {
     entry->prev = head;
     entry->next->prev = entry;
     head->next = entry;
+}
+
+/**
+ * @brief Inserts the given entry at the end of the list.
+ * @param head   The list's head
+ * @param entry  The entry to be added
+ */
+// The attribute always_inline force inline even without compiling with optimizations
+__attribute__((always_inline))
+inline void insert_at_list_tail(list_entry_t * head, list_entry_t * entry) {
+    entry->next = head;
+    entry->prev = head->prev;
+    entry->prev->next = entry;
+    head->prev = entry;
+}
+
+/**
+ * @brief Removes the entry at the head of the list.
+ * @param head The list's head
+ * @return The removed entry, or NULL if the list is empty
+ */
+// The attribute always_inline forces inline even without compilation optimizations
+__attribute__((always_inline))
+inline list_entry_t* remove_from_list_head(list_entry_t * head) {
+    if (is_empty(head)) return NULL;
+    list_entry_t* to_remove = head->next;
+    head->next = head->next->next;
+    return to_remove;
 }
 
 #endif

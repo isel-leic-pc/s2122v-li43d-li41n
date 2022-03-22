@@ -56,7 +56,7 @@ For reference:
 
 ## Week 3   
 ### 22/03/2022 - Creating a user mode multi-threading runtime: uthreads
-* Fundamental concepts of multi-thread runtimes
+* Fundamental concepts of multi-threading runtimes
   * Ready queue
   * Running thread
   * Scheduling
