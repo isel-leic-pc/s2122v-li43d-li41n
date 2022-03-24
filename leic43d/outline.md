@@ -67,17 +67,13 @@ For reference:
 For reference:
   * Lecture video (in Portuguese) _(coming soon)_
 
-### 24/03/2022 - Creating a user mode multi-threading runtime: uthreads (Script)  
-* The _uthreads_ runtime, conclusion
-  * Completing scheduling support
+### 24/03/2022 - Creating a user mode multi-threading runtime: uthreads
+* Fundamental concepts of multi-threading runtimes
   * Thread states: sleep, wait and ready
   * Synchronizer concept, revisited
-1. Completing scheduling support implementation
-   1. Fixing the existing memory leak: `internal_exit`
-   2. Improving the programming model:
-      1. No need to explicitly call `ut_exit`
-      2. Passing arguments to the functions that define the behaviour of _uthreads_
-2. Add support for _uthreads_ to temporarily relinquish the right to execute: `ut_sleep`
-   1. Add a global sleep queue
-   2. Change `ut_yield` so that termination only occurs after ALL _uthreads_ terminate
-3. Implementation of an _uthreads_ synchronizer (i.e. count down latch)
+* The _uthreads_ runtime, conclusion
+  1. Adding support for _uthreads_ to temporarily relinquish the right to execute: `ut_sleep`
+  2. Implementation of an _uthreads_ synchronizer (i.e. count down latch)
+
+For reference:
+  * Lecture video (in Portuguese) _(coming soon)_

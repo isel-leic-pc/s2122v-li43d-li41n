@@ -70,5 +70,5 @@ For reference:
   * Synchronizer concept, revisited
 1. Add support for _uthreads_ to temporarily relinquish the right to execute: `ut_sleep`
    1. Add a global sleep queue
-   2. Change `ut_yield` so that termination only occurs after ALL _uthreads_ terminate
+   2. Ensure that termination only occurs after ALL _uthreads_ terminate
 2. Implementation of an _uthreads_ synchronizer (i.e. count down latch)
