@@ -3,6 +3,12 @@
         "list.h": "c",
         "stdlib.h": "c",
         "compare": "c",
-        "type_traits": "c"
+        "type_traits": "c",
+        "stdbool.h": "c",
+        "stdint.h": "c",
+        "stddef.h": "c",
+        "stdio.h": "c",
+        "time.h": "c",
+        "uthread.h": "c"
     }
 }

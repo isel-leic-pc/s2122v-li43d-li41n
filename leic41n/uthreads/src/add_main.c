@@ -12,8 +12,8 @@ int main(int argc, char *argv[]) {
     int result = add_asm(arg1, arg2);
     printf("add_asm(%d, %d) = %d\n", arg1, arg2, result);
     printf("Result's address is %p", (void*) &result);
-    puts("\nPress any key to continue");
+    puts("\nPress any key to finish");
     getchar();
-    printf("Result is = %d. Its address is %p\n", result, (void*) &result);
+    printf("Lets look at the address of result again: %p\n", (void*) &result);
     return 0;
 }

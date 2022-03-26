@@ -65,7 +65,7 @@ For reference:
   * Demo: materialization of the afore mentioned concepts on the _uthreads_ runtime
 
 For reference:
-  * Lecture video (in Portuguese) _(coming soon)_
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=Pz0SES1aGts&list=PL8XxoCaL3dBiv-3pHZLbFGYsQiJa9X73o&index=3)
 
 ### 24/03/2022 - Creating a user mode multi-threading runtime: uthreads
 * Fundamental concepts of multi-threading runtimes
@@ -76,4 +76,4 @@ For reference:
   2. Implementation of an _uthreads_ synchronizer (i.e. count down latch)
 
 For reference:
-  * Lecture video (in Portuguese) _(coming soon)_
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=f6qmKxZbjpo&list=PL8XxoCaL3dBiv-3pHZLbFGYsQiJa9X73o&index=4)

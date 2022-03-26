@@ -6,14 +6,12 @@
     .global context_switch
     .global internal_exit
 
-# X86-64 calling conventions
 # https://en.wikipedia.org/wiki/X86_calling_conventions
 
 # rdi - pointer for the "switching out" uthread
 # rsi - pointer for the "switching in" uthread
-
 context_switch:
-
+	
     pushq %rbp
 	pushq %rbx
 	pushq %r12
@@ -22,18 +20,19 @@ context_switch:
 	pushq %r15
 
 	movq %rsp, (%rdi)
-
+	
     movq %rsi, running_uthread(%rip)
-
-	movq (%rsi), %rsp
-
+	
+    movq (%rsi), %rsp
+	
 	popq %r15
 	popq %r14
 	popq %r13
 	popq %r12
 	popq %rbx
 	popq %rbp
-    ret
+	
+	ret
 
 # rdi - pointer for the "switching in" uthread
 internal_exit:

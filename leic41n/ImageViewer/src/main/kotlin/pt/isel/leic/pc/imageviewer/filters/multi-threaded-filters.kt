@@ -7,10 +7,18 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toAwtImage
 import androidx.compose.ui.graphics.toComposeImageBitmap
+import sun.java2d.marlin.stats.Histogram
 import java.awt.image.BufferedImage
+import java.util.concurrent.CountDownLatch
 import kotlin.system.measureTimeMillis
 
 private const val EXPECTED_CORE_COUNT = 6
+
+data class Histogram(val values: Map<Int, Int>)
+
+fun computeLuminanceHistogram(imageBitmap: ImageBitmap): Histogram {
+    TODO()
+}
 
 /**
  * Converts the given image to its grayscale version (multithreaded version - MT)
@@ -27,7 +35,8 @@ fun convertToGrayScaleMT(imageBitmap: ImageBitmap): ImageBitmap {
     println("Image size is: width = ${bufferedImage.width}; height = ${bufferedImage.height}")
 
     val elapsed = measureTimeMillis {
-        (0 until EXPECTED_CORE_COUNT).map {
+        val latch = CountDownLatch(EXPECTED_CORE_COUNT)
+        repeat(EXPECTED_CORE_COUNT) {
             Thread {
                 val ranges = computePartitionBounds(
                     width = bufferedImage.width,
@@ -48,8 +57,11 @@ fun convertToGrayScaleMT(imageBitmap: ImageBitmap): ImageBitmap {
                         alpha = it.alpha
                     )
                 }
+                latch.countDown()
             }.apply(Thread::start)
-        }.forEach(Thread::join)
+        }
+
+        latch.await()
     }
 
     val result = bufferedImage.toComposeImageBitmap()

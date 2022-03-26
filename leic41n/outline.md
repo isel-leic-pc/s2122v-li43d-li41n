@@ -62,13 +62,15 @@ For reference:
   * Demo: materialization of the afore mentioned concepts on the _uthreads_ runtime
 
 For reference:
-  * Lecture video (in Portuguese) _(coming soon)_
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=TfM1yRf56-Q&list=PL8XxoCaL3dBgPaKjgP87uSmKZ1MsIZ4rr&index=4)
 
-### 24/03/2022 - Creating a user mode multi-threading runtime: uthreads (Script)  
-* The _uthreads_ runtime, conclusion
+### 24/03/2022 - Creating a user mode multi-threading runtime: uthreads
+* Fundamental concepts of multi-threading runtimes
   * Thread states: sleep, wait and ready
   * Synchronizer concept, revisited
-1. Add support for _uthreads_ to temporarily relinquish the right to execute: `ut_sleep`
-   1. Add a global sleep queue
-   2. Ensure that termination only occurs after ALL _uthreads_ terminate
-2. Implementation of an _uthreads_ synchronizer (i.e. count down latch)
+* The _uthreads_ runtime, conclusion
+  1. Adding support for _uthreads_ to temporarily relinquish the right to execute: `ut_sleep`
+  2. Implementation of an _uthreads_ synchronizer (i.e. count down latch)
+
+For reference:
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=Hn51QKdZoRU&list=PL8XxoCaL3dBgPaKjgP87uSmKZ1MsIZ4rr&index=5)
