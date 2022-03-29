@@ -11,14 +11,6 @@ import java.awt.image.BufferedImage
 import java.util.concurrent.CountDownLatch
 import kotlin.system.measureTimeMillis
 
-private const val EXPECTED_CORE_COUNT = 6
-
-data class Histogram(val values: Map<Int, Int>);
-
-fun computeHistogram(imageBitmap: ImageBitmap): Histogram {
-    TODO()
-}
-
 /**
  * Converts the given image to its grayscale version (multithreaded version - MT)
  * (It uses the Luminosity method)
@@ -30,11 +22,11 @@ fun computeHistogram(imageBitmap: ImageBitmap): Histogram {
 fun convertToGrayScaleMT(imageBitmap: ImageBitmap): ImageBitmap {
 
     val bufferedImage: BufferedImage = imageBitmap.toAwtImage()
-    println("Converting to gray scale (Single threaded approach)")
-    println("Image size is: width = ${bufferedImage.width}; height = ${bufferedImage.height}")
+    filtersLogger.info("Converting to gray scale (Single threaded approach)")
+    filtersLogger.info("Image size is: width = ${bufferedImage.width}; height = ${bufferedImage.height}")
 
     val elapsed = measureTimeMillis {
-        val latch = CountDownLatch(EXPECTED_CORE_COUNT);
+        val latch = CountDownLatch(EXPECTED_CORE_COUNT)
         repeat(EXPECTED_CORE_COUNT) {
             Thread {
                 val (xBounds, yBounds) = computePartitionBounds(
@@ -43,8 +35,7 @@ fun convertToGrayScaleMT(imageBitmap: ImageBitmap): ImageBitmap {
                     partitionCount = EXPECTED_CORE_COUNT,
                     partitionIndex = it
                 )
-
-                bufferedImage.applyTransform(xBounds, yBounds) {
+                bufferedImage.applyTransform(xBounds = xBounds, yBounds = yBounds) {
                     val grayscaleValue = it.luminance()
                     Color(
                         red = grayscaleValue,
@@ -61,7 +52,7 @@ fun convertToGrayScaleMT(imageBitmap: ImageBitmap): ImageBitmap {
     }
 
     val result = bufferedImage.toComposeImageBitmap()
-    println("Converted to gray scale in $elapsed ms")
+    filtersLogger.info("Converted to gray scale in $elapsed ms")
     return result
 }
 
@@ -78,12 +69,33 @@ fun convertToGrayScaleMT(imageBitmap: ImageBitmap): ImageBitmap {
 fun adjustBrightnessMT(imageBitmap: ImageBitmap, delta: Float): ImageBitmap {
 
     val bufferedImage: BufferedImage = imageBitmap.toAwtImage()
-    println("Adjusting brightness (Single threaded approach): ")
-    println("Image size is: width = ${bufferedImage.width}; height = ${bufferedImage.height}")
+    filtersLogger.info("Adjusting brightness (Single threaded approach): ")
+    filtersLogger.info("Image size is: width = ${bufferedImage.width}; height = ${bufferedImage.height}")
     val elapsedMillis = measureTimeMillis {
-        // TODO
+        val latch = CountDownLatch(EXPECTED_CORE_COUNT)
+        repeat(EXPECTED_CORE_COUNT) {
+            Thread {
+                val (xBounds, yBounds) = computePartitionBounds(
+                    width = bufferedImage.width,
+                    height = bufferedImage.height,
+                    partitionCount = EXPECTED_CORE_COUNT,
+                    partitionIndex = it
+                )
+                bufferedImage.applyTransform(xBounds = xBounds, yBounds = yBounds) {
+                    Color(
+                        red = (it.red + delta).coerceInRGB(),
+                        green = (it.green + delta).coerceInRGB(),
+                        blue = (it.blue + delta).coerceInRGB(),
+                        colorSpace = it.colorSpace,
+                        alpha = it.alpha
+                    )
+                }
+                latch.countDown()
+            }.start()
+        }
+        latch.await()
     }
     val result = bufferedImage.toComposeImageBitmap()
-    println("Adjusted brightness in $elapsedMillis ms")
+    filtersLogger.info("Adjusted brightness in $elapsedMillis ms")
     return result
 }

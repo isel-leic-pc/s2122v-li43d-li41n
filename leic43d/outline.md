@@ -77,3 +77,23 @@ For reference:
 
 For reference:
   * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=f6qmKxZbjpo&list=PL8XxoCaL3dBiv-3pHZLbFGYsQiJa9X73o&index=4)
+
+## Week 4   
+### 29/03/2022 - Threading on the JVM: synchronization (Script)
+* Synchronization on the JVM
+  * Data synchronization
+  * Control synchronization
+* Demo: Computing histograms in the ImageViewer application
+  * Use a thread safe collecion (synchronized map): _an incorrect approach_
+  * Use a lock (both intrinsic and explicit): correct but with _poor concurrency_
+  * Use a ConcurrentHashMap
+  * Use a partitioned approach
+* Deadlocks: the problem of using locks
+  * Create a small example with an obvious deadlock
+* Building custom synchronizers using Lampson and Redell monitors
+  * Purpose and motivation
+  * Lampson and Redell semantics
+  * Demo: Latch with support for timeout and cancelation
+  * Exercises: CountDownLatch; Future
+  * Demo: UnboundedBuffer
+  * Exercise: BoundedBuffer

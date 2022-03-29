@@ -17,8 +17,8 @@ import kotlin.system.measureTimeMillis
 fun convertToGrayScaleST(imageBitmap: ImageBitmap): ImageBitmap {
 
     val bufferedImage: BufferedImage = imageBitmap.toAwtImage()
-    println("Converting to gray scale (Single threaded approach)")
-    println("Image size is: width = ${bufferedImage.width}; height = ${bufferedImage.height}")
+    filtersLogger.info("Converting to gray scale (Single threaded approach)")
+    filtersLogger.info("Image size is: width = ${bufferedImage.width}; height = ${bufferedImage.height}")
     val elapsed = measureTimeMillis {
         bufferedImage.applyTransform {
             val grayscaleValue = it.luminance()
@@ -32,7 +32,7 @@ fun convertToGrayScaleST(imageBitmap: ImageBitmap): ImageBitmap {
         }
     }
     val result = bufferedImage.toComposeImageBitmap()
-    println("Converted to gray scale in $elapsed ms")
+    filtersLogger.info("Converted to gray scale in $elapsed ms")
     return result
 }
 
@@ -45,8 +45,8 @@ fun convertToGrayScaleST(imageBitmap: ImageBitmap): ImageBitmap {
 fun adjustBrightnessST(imageBitmap: ImageBitmap, delta: Float): ImageBitmap {
 
     val bufferedImage: BufferedImage = imageBitmap.toAwtImage()
-    println("Adjusting brightness (Single threaded approach): ")
-    println("Image size is: width = ${bufferedImage.width}; height = ${bufferedImage.height}")
+    filtersLogger.info("Adjusting brightness (Single threaded approach): ")
+    filtersLogger.info("Image size is: width = ${bufferedImage.width}; height = ${bufferedImage.height}")
     val elapsedMillis = measureTimeMillis {
         bufferedImage.applyTransform {
             Color(
@@ -59,6 +59,6 @@ fun adjustBrightnessST(imageBitmap: ImageBitmap, delta: Float): ImageBitmap {
         }
     }
     val result = bufferedImage.toComposeImageBitmap()
-    println("Adjusted brightness in $elapsedMillis ms")
+    filtersLogger.info("Adjusted brightness in $elapsedMillis ms")
     return result
 }

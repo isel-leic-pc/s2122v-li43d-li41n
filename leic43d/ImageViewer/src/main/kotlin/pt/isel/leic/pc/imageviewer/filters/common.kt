@@ -1,8 +1,17 @@
 package pt.isel.leic.pc.imageviewer.filters
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.toComposeImageBitmap
+import org.jetbrains.skia.Image
 import java.awt.image.BufferedImage
+import java.io.ByteArrayOutputStream
+import javax.imageio.ImageIO
+
+const val EXPECTED_CORE_COUNT = 6
+
+val filtersLogger = org.slf4j.LoggerFactory.getLogger("Filters")
 
 /**
  * Extension function that coerces this float to the acceptable RGB interval [0.0 ... 1.0]
@@ -26,6 +35,32 @@ fun BufferedImage.applyTransform(
         }
     }
     return this
+}
+
+/**
+ * Extension function that executes the given action for each pixel of this [BufferedImage] that is within the
+ * specified bounds.
+ */
+fun BufferedImage.forEach(
+    xBounds: IntRange = 0 until width,
+    yBounds: IntRange = 0 until height,
+    action: (Color) -> Unit
+): BufferedImage {
+    for (x in xBounds) {
+        for (y in yBounds) {
+            action(Color(getRGB(x, y)))
+        }
+    }
+    return this
+}
+
+/**
+ * Extension function that converts this [BufferedImage] instance to an [ImageBitmap]
+ */
+fun BufferedImage.toImageBitmap(formatName: String = "png"): ImageBitmap {
+    val outputStream = ByteArrayOutputStream()
+    ImageIO.write(this, formatName, outputStream)
+    return Image.makeFromEncoded(outputStream.toByteArray()).toComposeImageBitmap()
 }
 
 /**
