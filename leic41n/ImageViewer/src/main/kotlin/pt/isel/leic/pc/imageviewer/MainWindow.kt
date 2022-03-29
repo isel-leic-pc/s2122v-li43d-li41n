@@ -22,7 +22,9 @@ import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import pt.isel.leic.pc.imageviewer.filters.adjustBrightnessMT
+import pt.isel.leic.pc.imageviewer.filters.computeLuminanceHistogramST
 import pt.isel.leic.pc.imageviewer.filters.convertToGrayScaleMT
+import pt.isel.leic.pc.imageviewer.filters.filtersLogger
 import java.io.File
 
 /**
@@ -35,15 +37,16 @@ fun MainWindow(onCloseRequested: () -> Unit) = Window(onCloseRequest = onCloseRe
     val imageBitmap = remember { mutableStateOf<ImageBitmap?>(null) }
     val isGrayScale = remember { mutableStateOf(false) }
     val adjustBrightness = remember { mutableStateOf(false) }
+    val contrastStretch = remember { mutableStateOf(false) }
 
     fun loadImage(file: File) {
         file.inputStream().use {
             // NOTE: This is wrong! It MUST be done without blocking the calling thread, because it is called from
             // an event handler. Because all events are delivered sequentially, if we block the calling thread, the
             // handling of all subsequent events is delayed and therefore the user experience suffers.
-            print("Loading image ... ")
+            filtersLogger.info("Loading image ... ")
             imageBitmap.value = loadImageBitmap(it)
-            println("done!")
+            filtersLogger.info("done!")
         }
     }
 
@@ -55,12 +58,15 @@ fun MainWindow(onCloseRequested: () -> Unit) = Window(onCloseRequest = onCloseRe
             onGrayScaleChanged = { isGrayScale.value = it },
             isBrightnessEnabled = adjustBrightness.value,
             onBrightnessChanged = { adjustBrightness.value = it },
+            isContrastStretchEnabled = contrastStretch.value,
+            onContrastStretchChanged = { contrastStretch.value = it }
         )
 
         MainWindowContent(
             imageBitmap = imageBitmap.value,
             convertToGrayscale = isGrayScale.value,
-            adjustBrightness = adjustBrightness.value
+            adjustBrightness = adjustBrightness.value,
+            adjustContrast = contrastStretch.value
         )
     }
 }
@@ -75,7 +81,9 @@ fun FrameWindowScope.MainWindowMenu(
     isGrayScaleEnabled: Boolean,
     onGrayScaleChanged: (Boolean) -> Unit,
     isBrightnessEnabled: Boolean,
-    onBrightnessChanged: (Boolean) -> Unit
+    onBrightnessChanged: (Boolean) -> Unit,
+    isContrastStretchEnabled: Boolean,
+    onContrastStretchChanged: (Boolean) -> Unit
 ) = MenuBar {
     Menu("File") {
         Item(text = "Open", onClick = onLoad)
@@ -85,6 +93,7 @@ fun FrameWindowScope.MainWindowMenu(
     Menu("Image") {
         CheckboxItem(text = "Grayscale", checked = isGrayScaleEnabled, onCheckedChange = onGrayScaleChanged)
         CheckboxItem(text = "Brightness", checked = isBrightnessEnabled, onCheckedChange = onBrightnessChanged)
+        CheckboxItem(text = "Contrast", checked = isContrastStretchEnabled, onCheckedChange = onContrastStretchChanged)
     }
 }
 
@@ -92,7 +101,8 @@ fun FrameWindowScope.MainWindowMenu(
 fun MainWindowContent(
     imageBitmap: ImageBitmap?,
     convertToGrayscale: Boolean,
-    adjustBrightness: Boolean
+    adjustBrightness: Boolean,
+    adjustContrast: Boolean
 ) = Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
 
     // IMPORTANT NOTE:
@@ -100,12 +110,15 @@ fun MainWindowContent(
     // composition, which can happen many times. This is true for both single threaded and multithreaded
     // versions (ST and MT). We will fix this before the semester ends! =)
 
-    println("Composing MainWindowContent with non-null imageBitmap? ${imageBitmap != null}")
-    val rememberKey = Pair(imageBitmap, convertToGrayscale)
+    filtersLogger.trace("Composing MainWindowContent with non-null imageBitmap? ${imageBitmap != null}")
+    val rememberKey = Triple(imageBitmap, convertToGrayscale, adjustContrast)
     val currentImage = remember(rememberKey) {
-        println("Running block to remember with key = $rememberKey")
+        filtersLogger.trace("Running block to remember with key = $rememberKey")
         imageBitmap?.let {
-            if (convertToGrayscale) convertToGrayScaleMT(imageBitmap) else imageBitmap
+            val result = if (convertToGrayscale) convertToGrayScaleMT(imageBitmap) else imageBitmap
+            // Not using the histogram info (for now)
+            if (adjustContrast) computeLuminanceHistogramST(result)
+            result
         }
     }
 
@@ -114,9 +127,9 @@ fun MainWindowContent(
 
         val (current, isFinalValue) = brightness.value
         val imageToDisplay = if (isFinalValue) adjustBrightnessMT(currentImage, current) else currentImage
-        println("Composition of Image starts")
+        filtersLogger.trace("Composition of Image starts")
         Image(imageToDisplay, "", modifier = Modifier.weight(1.0f).align(Alignment.CenterHorizontally))
-        println("Composition of Image ends")
+        filtersLogger.trace("Composition of Image ends")
 
         if (adjustBrightness) {
             Row(modifier = Modifier.padding(start = 32.dp, end = 32.dp, top = 16.dp)) {
@@ -132,5 +145,5 @@ fun MainWindowContent(
             }
         }
     }
-    println("Composition of MainWindowContent ends")
+    filtersLogger.trace("Composition of MainWindowContent ends")
 }
