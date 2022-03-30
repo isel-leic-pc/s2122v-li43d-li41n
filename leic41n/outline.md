@@ -76,21 +76,40 @@ For reference:
   * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=Hn51QKdZoRU&list=PL8XxoCaL3dBgPaKjgP87uSmKZ1MsIZ4rr&index=5)
 
 ## Week 4   
-### 29/03/2022 - Threading on the JVM: synchronization (Script)
+### 29/03/2022 - Threading on the JVM: synchronization
 * Synchronization on the JVM
   * Data synchronization
   * Control synchronization
-* Demo: Computing histograms in the ImageViewer application
-  * Use a thread safe collecion (synchronized map): _an incorrect approach_
-  * Use a lock (both intrinsic and explicit): correct but with _poor concurrency_
-  * Use a ConcurrentHashMap
-  * Use a partitioned approach
-* Deadlocks: the problem of using locks
-  * Create a small example with an obvious deadlock
+* Data syncronization 
+  * Using locks
+    * Explicit locks (i.e. `ReentrantLock`)
+    * Intrinsic locks
+  * Thread safe data structures
+    * Lock based (`Collections.synchronizedMap(...)` and related)
+    * Optimized variants (e.g. `ConcurrentHashMap`)
+* Control synchronization: synchronizers (e.g. `CountDownLatch`)
+* Approaches to thread-safety, revisited
+* Demo: Materialization of the afore mentioned concepts on the ImageViewer application
 * Building custom synchronizers using Lampson and Redell monitors
   * Purpose and motivation
   * Lampson and Redell semantics
-  * Demo: Latch with support for timeout and cancelation
-  * Exercises: CountDownLatch; Future
-  * Demo: UnboundedBuffer
-  * Exercise: BoundedBuffer
+* Demo: `Latch` with support for timeout and cancelation
+* Exercises: `CountDownLatch`; `Future`
+
+For reference:
+  * Lecture video (in Portuguese) _(coming soon)_
+
+### 31/03/2022 - Threading on the JVM: monitors (Script)
+* Building custom synchronizers using Lampson and Redell monitors, continued
+* Demo: `UnboundedBuffer`
+  1. Always signal all waiting threads
+  2. Optimizing by only signalling if there are waiting threads
+  3. Optimizing further by only signalling one waiting thread
+* The problem of simultaneous cancelation and sinalization
+* Demo: Forcing the occurrence with a small test
+* Demo: Fixing the `UnboundedBuffer` implementation
+  1. By delaying the cancellation 
+  2. By regenerating the sinalization if required
+* Exercise: Add `putAll` to `UnboundedBuffer`
+* Exercise: `BoundedBuffer`
+

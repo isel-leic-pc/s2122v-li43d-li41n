@@ -22,7 +22,7 @@ import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import pt.isel.leic.pc.imageviewer.filters.adjustBrightnessMT
-import pt.isel.leic.pc.imageviewer.filters.computeLuminanceHistogramST
+import pt.isel.leic.pc.imageviewer.filters.computeLuminanceHistogramMTPrivate
 import pt.isel.leic.pc.imageviewer.filters.convertToGrayScaleMT
 import pt.isel.leic.pc.imageviewer.filters.filtersLogger
 import java.io.File
@@ -117,7 +117,7 @@ fun MainWindowContent(
         imageBitmap?.let {
             val result = if (convertToGrayscale) convertToGrayScaleMT(imageBitmap) else imageBitmap
             // Not using the histogram info (for now)
-            if (adjustContrast) computeLuminanceHistogramST(result)
+            if (adjustContrast) computeLuminanceHistogramMTPrivate(result)
             result
         }
     }
