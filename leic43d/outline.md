@@ -106,12 +106,9 @@ For reference:
 * Demo: `UnboundedBuffer`
   1. Always signal all waiting threads
   2. Optimizing by only signalling if there are waiting threads
-  3. Optimizing further by only signalling one waiting thread
-* The problem of simultaneous cancelation and sinalization
-* Demo: Forcing the occurrence with a small test
-* Demo: Fixing the `UnboundedBuffer` implementation
-  1. By delaying the cancellation 
-  2. By regenerating the sinalization if required
+  3. Optimizing further by only signalling one thread
 * Exercise: Add `putAll` to `UnboundedBuffer`
+  * What is the best we can do?
+* Exercise: Implementation of Android's `HandlerThread` 
 * Exercise: `BoundedBuffer`
 
