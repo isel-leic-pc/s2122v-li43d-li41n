@@ -1,11 +1,13 @@
 package pt.isel.leic.pc.demos.synch
 
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 class CountDownLatch(val initialCount: Int) {
 
     private var counter = initialCount
+
     private val mLock = ReentrantLock()
     private val mCondition = mLock.newCondition()
 
@@ -28,10 +30,31 @@ class CountDownLatch(val initialCount: Int) {
             if (counter == 0)
                 return
 
-            mCondition.await()
+            while (true) {
+                mCondition.await()
 
+                if (counter == 0)
+                    return
+            }
+        }
+    }
+
+    fun await(timeout: Long, unit: TimeUnit): Boolean {
+        mLock.withLock {
             if (counter == 0)
-                return
+                return true
+
+            while (true) {
+
+                val signalled = mCondition.await(timeout, unit)
+
+                if (counter == 0)
+                    return true
+
+                if (!signalled)
+                    return false
+            }
+
         }
     }
 }

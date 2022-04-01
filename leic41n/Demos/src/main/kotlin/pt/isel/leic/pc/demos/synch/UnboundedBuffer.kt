@@ -22,11 +22,26 @@ import kotlin.concurrent.withLock
 class UnboundedBuffer<T> {
 
     /**
+     * The actual buffer.
+     */
+    private val buffer = mutableListOf<T>()
+
+    // The monitor's lock and condition
+    private val mLock: Lock = ReentrantLock()
+    private val mCondition: Condition = mLock.newCondition()
+
+    /**
      * Adds the given element to the buffer.
      * @param elem The element to be added to the buffer
      */
     fun put(item: T) {
-        TODO()
+        mLock.withLock {
+            buffer.add(item)
+            // Notify a blocked thread.
+            // Note that for a thread to be blocked, the buffer can only have one element, the one we just added.
+            if (buffer.size == 1)
+                mCondition.signal()
+        }
     }
 
     /**
@@ -34,7 +49,12 @@ class UnboundedBuffer<T> {
      * @param elems The elements to be added to the buffer
      */
     fun putAll(items: Iterable<T>) {
-        TODO()
+        mLock.withLock {
+            val wasEmpty = buffer.isEmpty()
+            buffer.addAll(items)
+            if (wasEmpty)
+                mCondition.signalAll()      // This can be improved
+        }
     }
 
     /**
@@ -47,6 +67,23 @@ class UnboundedBuffer<T> {
      */
     @Throws(InterruptedException::class)
     fun take(timeout: Long, unit: TimeUnit): T? {
-        TODO()
+        mLock.withLock {
+
+            // Check if there are any elements in the buffer.
+            if (buffer.isNotEmpty())
+                return buffer.removeFirst()
+
+            // Otherwise, block calling thread until the required conditions are met
+            var remainingTime = unit.toNanos(timeout)
+            while (true) {
+                remainingTime = mCondition.awaitNanos(remainingTime)
+
+                if (buffer.isNotEmpty())
+                    return buffer.removeFirst()          // Thread was signaled
+
+                if (remainingTime <= 0)                 // Timeout
+                    return null
+            }
+        }
     }
 }

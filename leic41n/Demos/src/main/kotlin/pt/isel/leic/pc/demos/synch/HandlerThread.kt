@@ -1,5 +1,8 @@
 package palbp.laboratory.demos.synch
 
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+
 /**
  * A simplification of Android's Handler API.
  * Represents the contract to be supported by message handler's, that is, threads that support execution requests
@@ -22,11 +25,33 @@ typealias Action = () -> Unit
  */
 class HandlerThread(private val capacity: Int) : Thread(), Handler {
 
+    private val queue = mutableListOf<Action>()
+
+    // The monitor's lock and condition
+    private val mLock = ReentrantLock()
+    private val mCondition = mLock.newCondition()
+
     override fun run() {
-        TODO()
+        var nextAction: Action? = null
+        while (true) {
+            mLock.withLock {
+                while (queue.isEmpty())
+                    mCondition.await()
+
+                nextAction = queue.removeFirst()
+            }
+            nextAction?.invoke()
+        }
     }
 
     override fun post(action: () -> Unit): Boolean {
-        TODO()
+        mLock.withLock {
+            if (queue.size == capacity)
+                return false
+
+            queue.add(action)
+            mCondition.signal()
+            return true
+        }
     }
 }

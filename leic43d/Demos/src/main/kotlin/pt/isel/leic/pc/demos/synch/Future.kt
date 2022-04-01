@@ -1,6 +1,8 @@
 package pt.isel.leic.pc.demos.synch
 
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 /**
  * The contract for results that will be made available sometime in the future. Used as a result
@@ -40,31 +42,82 @@ interface AFuture<T> {
  */
 class AFutureImpl<T> : AFuture<T> {
 
+    // The future's possible results
+    private var result: T? = null
+    private var error: Throwable? = null
+
+    // The monitor's lock and condition
+    private val mLock = ReentrantLock()
+    private val mCondition = mLock.newCondition()
+
     @Throws(InterruptedException::class, Throwable::class)
     override fun get(): T {
-        TODO()
+        mLock.withLock {
+            // Do we have a result?
+            if (isDone) {
+                return result ?: throw error as Throwable
+            }
+
+            while (true) {
+                // There's no result yet. Let's block
+                mCondition.await()
+
+                // Do we have a result?
+                if (isDone) {
+                    return result ?: throw error as Throwable
+                }
+            }
+        }
     }
 
     @Throws(InterruptedException::class)
     override fun get(timeout: Long, unit: TimeUnit): T? {
-        TODO()
+        mLock.withLock {
+            // Do we have a result?
+            if (isDone)
+                return result ?: throw error as Throwable
+
+            var remainingTime = unit.toNanos(timeout)
+            while (true) {
+                remainingTime = mCondition.awaitNanos(remainingTime)
+
+                // Do we have a result?
+                if (isDone)
+                    return result ?: throw error as Throwable
+
+                // Has the wait time expired?
+                if (remainingTime <= 0)
+                    return null
+            }
+        }
     }
 
-    override var isDone: Boolean
-        get() = TODO()
-        private set(value) = TODO()
+    override var isDone: Boolean = false
+        get() = mLock.withLock { field }
+        // mLock must be held when accessing the property's setter
+        private set
 
     /**
      * Publishes a successful result, unblocking all waiting threads.
      */
     fun setSuccess(result: T) {
-        TODO()
+        mLock.withLock {
+            if (isDone) throw IllegalStateException()
+            this.result = result
+            isDone = true
+            mCondition.signalAll()
+        }
     }
 
     /**
      * Publishes an error result, unblocking all waiting threads.
      */
     fun setFailure(failure: Throwable) {
-        TODO()
+        mLock.withLock {
+            if (isDone) throw IllegalStateException()
+            this.error = failure
+            isDone = true
+            mCondition.signalAll()
+        }
     }
 }
