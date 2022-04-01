@@ -95,7 +95,7 @@ For reference:
 * Demo: Materialization of the afore mentioned concepts on the ImageViewer application
 
 For reference:
-  * Lecture video (in Portuguese) _(coming soon)_
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=wHACN3eRdcc&list=PL8XxoCaL3dBiv-3pHZLbFGYsQiJa9X73o&index=6)
 
 ### 31/03/2022 - Threading on the JVM: monitors
 * Building custom synchronizers using Lampson and Redell monitors
@@ -105,4 +105,20 @@ For reference:
 * Exercises: `CountDownLatch`; `Future`
 
 For reference:
-  * Lecture video (in Portuguese) _(coming soon)_
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=Ge0bFjOz4Ok&list=PL8XxoCaL3dBiv-3pHZLbFGYsQiJa9X73o&index=7)
+
+## Week 5   
+### 05/04/2022 - Threading on the JVM: monitors (Script)
+* Building custom synchronizers using Lampson and Redell monitors, continued
+* Quick overview of the provided examples: `HandlerThread` and `UnboundedBuffer`
+* Demo: Implementing a `ManualResetEvent` using the techniques studied so far
+  * Discuss the flaws of the solution
+* Present the "delegated execution" pattern (a.k.a. kernel style approach) as a means to address the solution's flaws
+* Demo: Implementing the `ManualResetEventKS` using the kernel style approach
+  * Discuss the solution properties
+* Exercise: `UnboundedQueue` 
+
+### 07/04/2022 - Threading on the JVM: monitors (Script)
+* Building custom synchronizers using Lampson and Redell monitors, continued
+
+_(To Be Defined)_
