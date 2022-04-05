@@ -110,12 +110,14 @@ For reference:
 ## Week 5   
 ### 05/04/2022 - Threading on the JVM: monitors (Script)
 * Building custom synchronizers using Lampson and Redell monitors, continued
-* Quick overview of the provided examples: `HandlerThread` and `UnboundedBuffer`
-* Demo: Implementing a `ManualResetEvent` using the techniques studied so far
+* Demo: Implementing a `ManualResetEventFlawed` using the techniques studied so far
   * Discuss the flaws of the solution
 * Present the "delegated execution" pattern (a.k.a. kernel style approach) as a means to address the solution's flaws
 * Demo: Implementing the `ManualResetEventKS` using the kernel style approach
   * Discuss the solution properties
+* IMPORTANT: Underline the purpose of the techniques we are studying 
+* Demo: Implementing the `ManualResetEvent` using a generation counter
+* Quick overview of the provided examples: `HandlerThread` and `UnboundedBuffer`
 * Exercise: `UnboundedQueue` 
 
 ### 07/04/2022 - Threading on the JVM: monitors (Script)
