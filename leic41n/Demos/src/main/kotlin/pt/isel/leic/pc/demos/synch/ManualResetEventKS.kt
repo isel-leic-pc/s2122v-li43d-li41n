@@ -11,6 +11,8 @@ import java.util.concurrent.TimeUnit
  * Gate open 	<=> manual reset event signaled
  * Gate closed 	<=> manual reset event not signaled
  *
+ * The implementation uses a "kernel style" solution pattern, also named "execution delegation" pattern.
+ *
  * Can we do better?
  */
 class ManualResetEventKS(val initialSignaledState: Boolean) {
