@@ -1,6 +1,5 @@
 package pt.isel.leic.pc.demos.synch
 
-import palbp.laboratory.demos.synch.HandlerThread
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.test.Test

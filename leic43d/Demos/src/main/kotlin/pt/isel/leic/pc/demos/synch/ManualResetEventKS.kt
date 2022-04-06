@@ -1,6 +1,8 @@
 package pt.isel.leic.pc.demos.synch
 
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 /**
  * Class whose instances represent <i>manual reset events</i>.
@@ -17,18 +19,39 @@ import java.util.concurrent.TimeUnit
  */
 class ManualResetEventKS(val initialSignaledState: Boolean) {
 
+    private var isSignaled = initialSignaledState
+
+    private class Request(var isSignaled: Boolean = false)
+    private val requests = mutableListOf<Request>()
+
+    private val mLock = ReentrantLock()
+    private val mCondition = mLock.newCondition()
+
+    private fun unblockThreads() {
+        while (requests.isNotEmpty())
+            requests.removeFirst().isSignaled = true
+        mCondition.signalAll()
+    }
+
     /**
      * Sets the manual reset event to the signaled state. Waiting threads are unblocked.
      */
     fun set() {
-        TODO()
+        mLock.withLock {
+            if (!isSignaled) {
+                isSignaled = true
+                unblockThreads()
+            }
+        }
     }
 
     /**
      * Sets the manual reset event to the non signaled state.
      */
     fun reset() {
-        TODO()
+        mLock.withLock {
+            isSignaled = false
+        }
     }
 
     /**
@@ -40,6 +63,24 @@ class ManualResetEventKS(val initialSignaledState: Boolean) {
      */
     @Throws(InterruptedException::class)
     fun waitOne(timeout: Long, unit: TimeUnit): Boolean {
-        TODO()
+        mLock.withLock {
+
+            if (isSignaled)
+                return true
+
+            var remainingTime = unit.toNanos(timeout)
+            val myRequest = Request(isSignaled = false)
+            requests.add(myRequest)
+
+            while (true) {
+                remainingTime = mCondition.awaitNanos(remainingTime)
+
+                if (myRequest.isSignaled)
+                    return true
+
+                if (remainingTime <= 0)
+                    return false
+            }
+        }
     }
 }

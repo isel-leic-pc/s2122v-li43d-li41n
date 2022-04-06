@@ -39,15 +39,18 @@ class Latch {
     @Throws(InterruptedException::class)
     fun await(timeout: Long, unit: TimeUnit): Boolean {
         mLock.withLock {
-            if (signalled) return true
+            if (signalled)
+                return true
 
             var remainingTime = unit.toNanos(timeout)
             while(true) {
-
                 remainingTime = mCondition.awaitNanos(remainingTime)
 
-                if (signalled) return true
-                if (remainingTime <= 0) return false
+                if (signalled)
+                    return true
+
+                if (remainingTime <= 0)
+                    return false
             }
         }
     }

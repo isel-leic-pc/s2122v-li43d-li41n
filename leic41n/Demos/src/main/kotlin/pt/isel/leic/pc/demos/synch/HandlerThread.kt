@@ -1,4 +1,4 @@
-package palbp.laboratory.demos.synch
+package pt.isel.leic.pc.demos.synch
 
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock

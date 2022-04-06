@@ -21,6 +21,7 @@
 
 For reference: 
   * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=M3sjLOJqC6w&list=PL8XxoCaL3dBiv-3pHZLbFGYsQiJa9X73o) 
+  * [Java Concurrency in Practice by Brian Goetz](https://jcip.net/), chapter 1
 
 ## Week 2
 ### 15/03/2022 - Threading on the JVM (the basics, continued)
@@ -40,6 +41,7 @@ For reference:
 
 For reference: 
   * Lecture video not available (the audio was damaged)
+  * [Java Concurrency in Practice by Brian Goetz](https://jcip.net/), chapters 2 and 3
 
 ### 17/03/2022 - Creating a user mode multi-threading runtime: uthreads
 * Operating system constructs that enable program execution
@@ -96,6 +98,7 @@ For reference:
 
 For reference:
   * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=wHACN3eRdcc&list=PL8XxoCaL3dBiv-3pHZLbFGYsQiJa9X73o&index=6)
+  * [Java Concurrency in Practice by Brian Goetz](https://jcip.net/), chapter 5
 
 ### 31/03/2022 - Threading on the JVM: monitors
 * Building custom synchronizers using Lampson and Redell monitors
@@ -106,21 +109,39 @@ For reference:
 
 For reference:
   * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=Ge0bFjOz4Ok&list=PL8XxoCaL3dBiv-3pHZLbFGYsQiJa9X73o&index=7)
+  * [Java Concurrency in Practice by Brian Goetz](https://jcip.net/), chapter 14
+  * [Sincronização com Monitores, por Carlos Martins](../docs/Synchronization_3rd.pdf)
 
 ## Week 5   
-### 05/04/2022 - Threading on the JVM: monitors (Script)
+### 05/04/2022 - Threading on the JVM: monitors
 * Building custom synchronizers using Lampson and Redell monitors, continued
-* Demo: Implementing a `ManualResetEventFlawed` using the techniques studied so far
-  * Discuss the flaws of the solution
-* Present the "delegated execution" pattern (a.k.a. kernel style approach) as a means to address the solution's flaws
-* Demo: Implementing the `ManualResetEventKS` using the kernel style approach
-  * Discuss the solution properties
-* IMPORTANT: Underline the purpose of the techniques we are studying 
-* Demo: Implementing the `ManualResetEvent` using a generation counter
-* Quick overview of the provided examples: `HandlerThread` and `UnboundedBuffer`
+  * Lampson and Redell semantics, continued
+  * The _Delegated Execution_ pattern (a.k.a. _kernel style_ approach)
+* Demos: `ManualResetEventFlawed`, `ManualResetEventKS`
+* Examples: `HandlerThread` and `UnboundedBuffer`
 * Exercise: `UnboundedQueue` 
 
-### 07/04/2022 - Threading on the JVM: monitors (Script)
-* Building custom synchronizers using Lampson and Redell monitors, continued
+For reference:
+  * Lecture video (in Portuguese) _(coming soon)_
+  * [Java Concurrency in Practice by Brian Goetz](https://jcip.net/), chapter 14
+  * [Sincronização com Monitores, por Carlos Martins](../docs/Synchronization_3rd.pdf)
 
-_(To Be Defined)_
+
+### 07/04/2022 - Threading on the JVM: monitors
+* Part 1: Building custom synchronizers using Lampson and Redell monitors, continued
+  * Lampson and Redell semantics, continued
+  * The _Specific Notification_ pattern: optimizing solutions based on the _Delegated Execution_ pattern to reduce the number of context-switches   
+  * Demo: Solving the `UnboundedQueue` exercise
+* Part 2: Practical class dedicated to the [first assignment](../docs/assignments/PC_s2122v_SE1.pdf)
+
+For reference:
+  * Lecture video (in Portuguese) _(coming soon)_
+  * [Java Concurrency in Practice by Brian Goetz](https://jcip.net/), chapter 14
+  * [Sincronização com Monitores, por Carlos Martins](../docs/Synchronization_3rd.pdf)
+
+## Week 6   
+### 12/04/2022 - Laboratory
+* Practical class dedicated to the [first assignment](../docs/assignments/PC_s2122v_SE1.pdf)
+
+### 14/04/2022 - Easter break (no classes)
+
