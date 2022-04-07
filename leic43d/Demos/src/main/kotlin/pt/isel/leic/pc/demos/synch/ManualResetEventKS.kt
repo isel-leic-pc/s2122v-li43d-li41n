@@ -73,13 +73,21 @@ class ManualResetEventKS(val initialSignaledState: Boolean) {
             requests.add(myRequest)
 
             while (true) {
-                remainingTime = mCondition.awaitNanos(remainingTime)
+                try {
+                    remainingTime = mCondition.awaitNanos(remainingTime)
+                }
+                catch (ie: InterruptedException) {
+                    requests.remove(myRequest)
+                    throw ie
+                }
 
                 if (myRequest.isSignaled)
                     return true
 
-                if (remainingTime <= 0)
+                if (remainingTime <= 0) {
+                    requests.remove(myRequest)
                     return false
+                }
             }
         }
     }

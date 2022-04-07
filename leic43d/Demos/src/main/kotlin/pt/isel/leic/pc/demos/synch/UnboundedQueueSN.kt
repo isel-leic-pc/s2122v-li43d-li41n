@@ -72,13 +72,21 @@ class UnboundedQueueSN<T> {
             var remainingTime = unit.toNanos(timeout)
             while (true) {
 
-                remainingTime = myRequest.condition.awaitNanos(remainingTime)
+                try {
+                    remainingTime = myRequest.condition.awaitNanos(remainingTime)
+                }
+                catch (ie: InterruptedException) {
+                    requests.remove(myRequest)
+                    throw ie
+                }
 
                 if (myRequest.item != null)
                     return myRequest.item
 
-                if (remainingTime <= 0)
+                if (remainingTime <= 0) {
+                    requests.remove(myRequest)
                     return null
+                }
             }
         }
     }
