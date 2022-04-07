@@ -85,7 +85,7 @@ For reference:
 * Synchronization on the JVM
   * Data synchronization
   * Control synchronization
-* Data syncronization 
+* Data synchronization 
   * Using locks
     * Explicit locks (i.e. `ReentrantLock`)
     * Intrinsic locks
