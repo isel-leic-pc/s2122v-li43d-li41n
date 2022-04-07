@@ -86,8 +86,10 @@ class UnboundedQueueKS<T> {
                 if (myRequest.item != null)
                     return myRequest.item
 
-                if (remainingTime <= 0)
+                if (remainingTime <= 0) {
+                    requests.remove(myRequest)
                     return null
+                }
             }
         }
     }

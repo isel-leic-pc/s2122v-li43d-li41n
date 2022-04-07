@@ -75,13 +75,21 @@ class ManualResetEventKS(val initialSignaledState: Boolean) {
             var remainingTime = unit.toNanos(timeout)
             while (true) {
 
-                remainingTime = mCondition.awaitNanos(remainingTime)
+                try {
+                    remainingTime = mCondition.awaitNanos(remainingTime)
+                }
+                catch (ie: InterruptedException) {
+                    waitingThreads.remove(myRequest)
+                    throw ie
+                }
 
                 if (myRequest.isSignalled)
                     return true
 
-                if (remainingTime <= 0)
+                if (remainingTime <= 0) {
+                    waitingThreads.remove(myRequest)
                     return false
+                }
             }
         }
     }
