@@ -127,7 +127,7 @@ For reference:
 * Exercise: `UnboundedQueue` (solved in class using the _specific notification_ pattern)
 
 For reference:
-  * Lecture video (in Portuguese) _(coming soon)_
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=-SMpgXR3lwI&list=PL8XxoCaL3dBgPaKjgP87uSmKZ1MsIZ4rr&index=8)
   * [Java Concurrency in Practice by Brian Goetz](https://jcip.net/), chapter 14
   * [Sincronização com Monitores, por Carlos Martins](../docs/Synchronization_3rd.pdf)
 

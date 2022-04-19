@@ -122,7 +122,7 @@ For reference:
 * Exercise: `UnboundedQueue` 
 
 For reference:
-  * Lecture video (in Portuguese) _(coming soon)_
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=RUkT7WkWgl8&list=PL8XxoCaL3dBiv-3pHZLbFGYsQiJa9X73o&index=8)
   * [Java Concurrency in Practice by Brian Goetz](https://jcip.net/), chapter 14
   * [Sincronização com Monitores, por Carlos Martins](../docs/Synchronization_3rd.pdf)
 
@@ -135,7 +135,7 @@ For reference:
 * Part 2: Practical class dedicated to the [first assignment](../docs/assignments/PC_s2122v_SE1.pdf)
 
 For reference:
-  * Lecture video (in Portuguese) _(coming soon)_
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=j-_kOqrOJU8&list=PL8XxoCaL3dBiv-3pHZLbFGYsQiJa9X73o&index=9)
   * [Java Concurrency in Practice by Brian Goetz](https://jcip.net/), chapter 14
   * [Sincronização com Monitores, por Carlos Martins](../docs/Synchronization_3rd.pdf)
 

@@ -7,11 +7,10 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.net.ServerSocket
 import java.net.Socket
-import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicInteger
 
 private const val EXIT = "exit"
-private val logger = LoggerFactory.getLogger("SingleThreaded Echo Server")
+private val logger = LoggerFactory.getLogger("MultiThreaded Unthrottled Echo Server")
 
 /**
  * Number of client sessions initiated during the server's current execution
@@ -29,16 +28,13 @@ private fun createSession(): Int = sessionCount.incrementAndGet()
 fun main(args: Array<String>) {
     val port = if (args.isEmpty() || args[0].toIntOrNull() == null) 8000 else args[0].toInt()
     val serverSocket = ServerSocket(port)
-    val concurrentSessions = Semaphore(2)
     logger.info("Process id is = ${ProcessHandle.current().pid()}. Starting echo server at port $port")
     while (true) {
         logger.info("Ready to accept connections")
         val sessionSocket = serverSocket.accept()
         logger.info("Accepted client connection. Remote host is ${sessionSocket.inetAddress}")
-        concurrentSessions.acquire()
         Thread {
             handleEchoSession(sessionSocket)
-            concurrentSessions.release()
         }.start()
     }
 }
