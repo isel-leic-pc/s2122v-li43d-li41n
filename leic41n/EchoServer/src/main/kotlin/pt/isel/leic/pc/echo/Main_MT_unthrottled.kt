@@ -13,16 +13,6 @@ private const val EXIT = "exit"
 private val logger = LoggerFactory.getLogger("MultiThreaded Unthrottled Echo Server")
 
 /**
- * Number of client sessions initiated during the server's current execution
- */
-private val sessionCount = AtomicInteger(0)
-
-/**
- * Creates a client session, incrementing the number of initiated sessions.
- */
-private fun createSession(): Int = sessionCount.incrementAndGet()
-
-/**
  * The server's entry point.
  */
 fun main(args: Array<String>) {
@@ -32,7 +22,7 @@ fun main(args: Array<String>) {
     while (true) {
         logger.info("Ready to accept connections")
         val sessionSocket = serverSocket.accept()
-        logger.info("Accepted client connection. Remote host is ${sessionSocket.inetAddress}")
+        logger.info("Accepted client connection. Session count is ${SessionInfo.currentSessions}")
         Thread {
             handleEchoSession(sessionSocket)
         }.start()
@@ -43,7 +33,7 @@ fun main(args: Array<String>) {
  * Serves the client connected to the given [Socket] instance
  */
 private fun handleEchoSession(sessionSocket: Socket) {
-    val sessionId = createSession()
+    val sessionId = SessionInfo.createSession()
     var echoCount = 0
     sessionSocket.use {
         val input = BufferedReader(InputStreamReader(sessionSocket.getInputStream()))
@@ -58,5 +48,6 @@ private fun handleEchoSession(sessionSocket: Socket) {
             output.println("($echoCount) Echo: $line")
         }
         output.println("Bye!")
+        SessionInfo.endSession()
     }
 }

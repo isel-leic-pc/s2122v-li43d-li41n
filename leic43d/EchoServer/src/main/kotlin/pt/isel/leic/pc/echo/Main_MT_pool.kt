@@ -7,21 +7,31 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.net.ServerSocket
 import java.net.Socket
-import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicInteger
 
 private const val EXIT = "exit"
-private val logger = LoggerFactory.getLogger("MultiThreaded Throttled With Semaphore Echo Server")
+private val logger = LoggerFactory.getLogger("MultiThreaded Throttled With Thread Pool Echo Server")
 
-/**
- * Number of client sessions initiated during the server's current execution
- */
-private val sessionCount = AtomicInteger(0)
+object SessionInfo {
 
-/**
- * Creates a client session, incrementing the number of initiated sessions.
- */
-private fun createSession(): Int = sessionCount.incrementAndGet()
+    private val sessionCount = AtomicInteger(0)
+    private val currentCount = AtomicInteger(0)
+
+    val totalSessions: Int
+        get() = sessionCount.get()
+
+    val currentSessions: Int
+        get() = currentCount.get()
+
+    fun createSession(): Int {
+        currentCount.incrementAndGet()
+        return sessionCount.incrementAndGet()
+    }
+
+    fun endSession() {
+        currentCount.decrementAndGet()
+    }
+}
 
 /**
  * The server's entry point.
@@ -29,17 +39,15 @@ private fun createSession(): Int = sessionCount.incrementAndGet()
 fun main(args: Array<String>) {
     val port = if (args.isEmpty() || args[0].toIntOrNull() == null) 8000 else args[0].toInt()
     val serverSocket = ServerSocket(port)
-    val concurrentSessions = Semaphore(6)
     logger.info("Process id is = ${ProcessHandle.current().pid()}. Starting echo server at port $port")
+    val threadPool = ThreadPool(6)
     while (true) {
         logger.info("Ready to accept connections")
         val sessionSocket = serverSocket.accept()
         logger.info("Accepted client connection. Remote host is ${sessionSocket.inetAddress}")
-        concurrentSessions.acquire()
-        Thread {
+        threadPool.execute(action = {
             handleEchoSession(sessionSocket)
-            concurrentSessions.release()
-        }.start()
+        })
     }
 }
 
@@ -47,7 +55,7 @@ fun main(args: Array<String>) {
  * Serves the client connected to the given [Socket] instance
  */
 private fun handleEchoSession(sessionSocket: Socket) {
-    val sessionId = createSession()
+    val sessionId = SessionInfo.createSession()
     var echoCount = 0
     sessionSocket.use {
         val input = BufferedReader(InputStreamReader(sessionSocket.getInputStream()))
@@ -62,5 +70,6 @@ private fun handleEchoSession(sessionSocket: Socket) {
             output.println("($echoCount) Echo: $line")
         }
         output.println("Bye!")
+        SessionInfo.endSession()
     }
 }

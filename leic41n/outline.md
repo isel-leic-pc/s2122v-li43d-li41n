@@ -134,3 +134,25 @@ For reference:
 ### 07/04/2022 - Laboratory
 * Practical class dedicated to the [first assignment](../docs/assignments/PC_s2122v_SE1.pdf)
 
+## Week 6   
+### 12/04/2022 - Laboratory
+* Practical class dedicated to the [first assignment](../docs/assignments/PC_s2122v_SE1.pdf)
+
+### 14/04/2022 - Easter holidays (no classes)
+
+## Week 7   
+### 19/04/2022 - Threading on the JVM: thread pools
+* Thread pools
+  * Purpose and motivation
+  * Considerations on the dimensioning of thread pools
+  * Compute bound and I/O bound work
+* Building custom synchronizers using Lampson and Redell monitors, continued
+* Demo: Building a thread pool
+
+For reference:
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=fdCSLpsNKMU&list=PL8XxoCaL3dBgPaKjgP87uSmKZ1MsIZ4rr&index=9)
+  * [Java Concurrency in Practice by Brian Goetz](https://jcip.net/), chapters 8 and 14
+
+### 21/04/2022 - Threading on the JVM: synchronization
+
+
