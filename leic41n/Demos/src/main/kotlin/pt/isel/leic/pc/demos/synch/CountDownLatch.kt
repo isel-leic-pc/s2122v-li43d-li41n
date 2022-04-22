@@ -1,6 +1,5 @@
 package pt.isel.leic.pc.demos.synch
 
-import com.sun.tools.javac.jvm.ByteCodes.ret
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock

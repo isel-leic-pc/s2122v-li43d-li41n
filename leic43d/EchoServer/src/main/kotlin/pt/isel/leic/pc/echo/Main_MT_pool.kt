@@ -40,7 +40,7 @@ fun main(args: Array<String>) {
     val port = if (args.isEmpty() || args[0].toIntOrNull() == null) 8000 else args[0].toInt()
     val serverSocket = ServerSocket(port)
     logger.info("Process id is = ${ProcessHandle.current().pid()}. Starting echo server at port $port")
-    val threadPool = ThreadPool(6)
+    val threadPool = ThreadPool(Runtime.getRuntime().availableProcessors())
     while (true) {
         logger.info("Ready to accept connections")
         val sessionSocket = serverSocket.accept()
