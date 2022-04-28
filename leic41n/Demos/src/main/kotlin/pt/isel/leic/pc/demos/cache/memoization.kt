@@ -19,6 +19,9 @@ class NonScalableCache<K, V>(private val compute: (K) -> V) : Cache<K, V> {
         }
 }
 
+/**
+ * Flawed implementation
+ */
 class CacheForFun1<K, V>(private val compute: (K) -> V) : Cache<K, V> {
 
     private val cache = HashMap<K, V>()
@@ -41,6 +44,122 @@ class CacheForFun1<K, V>(private val compute: (K) -> V) : Cache<K, V> {
     }
 }
 
+class CacheForFun2<K, V>(private val compute: (K) -> V) : Cache<K, V> {
+
+    private val cache = HashMap<K, CacheFuture<K, V>>()
+    private val guard = ReentrantLock()
+
+    private class CacheFuture<K, V>(private val compute: (K) -> V) {
+
+        private var value: V? = null
+        private val entryGuard = ReentrantLock()
+
+        fun get(key: K): V {
+            entryGuard.withLock {
+                if (value == null)
+                    value = compute(key)
+
+                return value as V
+            }
+        }
+    }
+
+    override fun get(key: K): V {
+
+        var valueFuture: CacheFuture<K, V>? = null
+        guard.withLock {
+            valueFuture = cache[key]
+            if (valueFuture == null) {
+                valueFuture = CacheFuture(compute)
+                cache[key] = valueFuture as CacheFuture<K, V>
+            }
+        }
+        return (valueFuture as CacheFuture<K, V>).get(key)
+    }
+}
+
+/**
+ * Flawed implementation.
+ */
+class CacheForFun3<K, V>(private val compute: (K) -> V) : Cache<K, V> {
+
+    private val cache = HashMap<K, CacheFuture<K, V>>()
+    private val guard = ReentrantLock()
+
+    private class CacheFuture<K, V>(private val compute: (K) -> V) {
+
+        private var value: V? = null
+        private val entryGuard = ReentrantLock()
+
+        fun get(key: K): V {
+
+            if (value != null) {
+                return value as V
+            }
+
+            entryGuard.withLock {
+
+                if (value == null)
+                    value = compute(key)
+
+                return value as V
+            }
+        }
+    }
+
+    override fun get(key: K): V {
+
+        var valueFuture: CacheFuture<K, V>? = null
+        guard.withLock {
+            valueFuture = cache[key]
+            if (valueFuture == null) {
+                valueFuture = CacheFuture(compute)
+                cache[key] = valueFuture as CacheFuture<K, V>
+            }
+        }
+        return (valueFuture as CacheFuture<K, V>).get(key)
+    }
+}
+
+class CacheForFun4<K, V>(private val compute: (K) -> V) : Cache<K, V> {
+
+    private val cache = HashMap<K, CacheFuture<K, V>>()
+    private val guard = ReentrantLock()
+
+    private class CacheFuture<K, V>(private val compute: (K) -> V) {
+
+        @Volatile private var value: V? = null
+        private val entryGuard = ReentrantLock()
+
+        fun get(key: K): V {
+
+            if (value != null) {
+                return value as V
+            }
+
+            entryGuard.withLock {
+
+                if (value == null)
+                    value = compute(key)
+
+                return value as V
+            }
+        }
+    }
+
+    override fun get(key: K): V {
+
+        var valueFuture: CacheFuture<K, V>? = null
+        guard.withLock {
+            valueFuture = cache[key]
+            if (valueFuture == null) {
+                valueFuture = CacheFuture(compute)
+                cache[key] = valueFuture as CacheFuture<K, V>
+            }
+        }
+        return (valueFuture as CacheFuture<K, V>).get(key)
+    }
+}
 
 class ScalableCache<K, V>(private val compute: (K) -> V) : Cache<K, V> {
     private val cache = ConcurrentHashMap<K, V>()

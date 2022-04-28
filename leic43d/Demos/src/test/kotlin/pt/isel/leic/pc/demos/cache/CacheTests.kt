@@ -68,6 +68,16 @@ class CacheTests {
     }
 
     @Test
+    fun `test throughput of CacheForFun3`() {
+        doIt(pool, CacheForFun3(::longComputation))
+    }
+
+    @Test
+    fun `test throughput of CacheForFun4`() {
+        doIt(pool, CacheForFun4(::longComputation))
+    }
+
+    @Test
     fun `test throughput of ScalableCache`() {
         doIt(pool, ScalableCache(::longComputation))
     }
@@ -81,3 +91,16 @@ class CacheTests {
 // sc 1000741323
 // f1  406435610
 // f2  168060614
+
+// ns        494
+// sc 1432774590
+// f1  399601237
+// f2  149440509
+// f3  221835275
+
+// ns        438
+// sc 1309614692
+// f1  385818626
+// f2  151798714
+// f3  284256092
+// f4  300507685

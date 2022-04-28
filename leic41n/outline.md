@@ -154,5 +154,56 @@ For reference:
   * [Java Concurrency in Practice by Brian Goetz](https://jcip.net/), chapters 8 and 14
 
 ### 21/04/2022 - Threading on the JVM: synchronization
+* Synchronization on the JVM: exercises
+  * Demo: Building a scalable custom cache
 
+For reference:
+  * [Lecture video (in Portuguese)](youtube.com/watch?v=fVBnMuSvg3M&list=PL8XxoCaL3dBgPaKjgP87uSmKZ1MsIZ4rr&index=10)
+  * [Java Concurrency in Practice by Brian Goetz](https://jcip.net/), chapter 5
+
+## Week 8   
+### 26/04/2022 - The JVM Memory Model (JMM)
+* The JVM memory model, introduction
+  * Purpose and motivation
+  * Sequential consistency and its limitations
+  * Consequences of relaxing the memory model guarantees 
+* JVM memory model, described
+  * Guarantees regarding atomicity and visibility
+  * Coherence and causality in memory accesses 
+  * The `volatile` qualifier (`@Volatile` in Kotlin) and the consequences of its use
+  * The __Happens Before__ order of events
+
+ For reference:
+  * Lecture video (in Portuguese) _(coming soon)_
+  * [Java Concurrency in Practice by Brian Goetz](https://jcip.net/), chapter 16
+
+### 28/04/2022 - The JVM Memory Model (JMM), continued (Script)
+* The JVM memory model, continued
+  * Safe publication
+  * Demo: Revisit the SessionInfo singleton in the EchoServer demo
+    * Step 1: Assert it is thread safe. Assert it is appropriately published.
+    * Step 2: Lets build an artesanal SessionInfo singleton.
+      * Step 2.1: Define a class using `var` all over the place instead of `val`
+      * Step 2.2: Define a singleton instance using var
+    * Guarantees for immutable values
+      * The merits of immutability, revisited
+* Exercising with the JMM
+  * Building simple non blocking algorithms
+    * Purpose and motivation
+    * Anatomy of lock free algorithms
+  * Demos:
+    * LockFreeCounter
+      * Step 1: Implement increment and decrement operations without using the required while
+      * Step 2: Build the test that shows the implementation flaws (by reusing the one from ThreadingHazardsTests)
+      * Step 3: Fix it
+      * Step 4: Change the signatures of increment and decrement so that they return the new value (with more than one get)
+      * Step 5: Buuild a test to show that the solution is incorrect
+      * Step 6: Fix it by making only one read. Revisit the coherence slide.
+    * LockFreeStack
+      * Step 1: Start by identifying the [original author, Treiber](https://en.wikipedia.org/wiki/Treiber_stack)
+      * Step 2: Define public contract (i.e. push, pop)
+      * Step 3: Define Node class and use an AtomicReference for the stack's top.
+      * Step 4: Implement the push operation
+      * Step 5: Implement the pop operation
+      * Step 6: Build test (by reusing the one from ThreadingHazardsTests)
 

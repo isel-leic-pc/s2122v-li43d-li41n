@@ -26,6 +26,9 @@ class ScalableCache<K, V>(private val compute: (K) -> V) : Cache<K, V> {
     override fun get(key: K): V = cache.computeIfAbsent(key) { compute(key) }
 }
 
+/**
+ * Flawed implementation
+ */
 class CacheForFun1<K, V>(private val compute: (K) -> V) : Cache<K, V> {
     private val guard = ReentrantLock()
     private val cache = HashMap<K, V>()
@@ -71,4 +74,72 @@ class CacheForFun2<K, V>(private val compute: (K) -> V) : Cache<K, V> {
     }
 }
 
+/**
+ * Flawed implementation
+ */
+class CacheForFun3<K, V>(private val compute: (K) -> V) : Cache<K, V> {
+
+    private class CacheFuture<K, V>(private val compute: (K) -> V) {
+
+        private val guard = ReentrantLock()
+        private var value: V? = null
+
+        fun get(key: K): V {
+            if (value != null)
+                return value as V
+
+            guard.withLock {
+                if (value != null)
+                    return value as V
+
+                value = compute(key)
+                return value as V
+            }
+        }
+    }
+
+    private val guard = ReentrantLock()
+    private val cache = HashMap<K, CacheFuture<K, V>>()
+
+    override fun get(key: K): V {
+        val value = guard.withLock {
+            val future = cache[key]
+            future ?: CacheFuture(compute).also { cache[key] = it }
+        }
+        return value.get(key)
+    }
+}
+
+class CacheForFun4<K, V>(private val compute: (K) -> V) : Cache<K, V> {
+
+    private class CacheFuture<K, V>(private val compute: (K) -> V) {
+
+        private val guard = ReentrantLock()
+        @Volatile private var value: V? = null
+
+        fun get(key: K): V {
+            if (value != null)
+                return value as V
+
+            guard.withLock {
+                if (value != null)
+                    return value as V
+
+                value = compute(key)
+                return value as V
+            }
+        }
+    }
+
+    private val guard = ReentrantLock()
+    private val cache = HashMap<K, CacheFuture<K, V>>()
+
+    override fun get(key: K): V {
+        val value = guard.withLock {
+            val future = cache[key]
+            future ?: CacheFuture(compute).also { cache[key] = it }
+        }
+        return value.get(key)
+    }
+}
 
