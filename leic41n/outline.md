@@ -211,4 +211,4 @@ For reference:
   * Lecture video (in Portuguese) _(coming soon)_
   * [Java Concurrency in Practice by Brian Goetz](https://jcip.net/), chapters 15 and 16
   * [Java Memory Model Unlearning Experience, by Aleksey Shipilëv](https://www.youtube.com/watch?v=TK-7GCCDF_I)
-  * [Java Memory Model Pragmatics (Transcript), by Aleksey Shipilëv](https://shipilev.net/blog/2014/jmm-pragmatics/)
+  * [Close Encounters of The Java Memory Model Kind, by Aleksey Shipilëv](https://shipilev.net/blog/2016/close-encounters-of-jmm-kind/)
