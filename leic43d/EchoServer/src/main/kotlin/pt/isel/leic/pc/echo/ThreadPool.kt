@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-
 class ThreadPool(private val maxThreadCount: Int = 1) : Executor {
 
     private class ThreadPoolWorker(private val pool: ThreadPool) : Thread() {
@@ -32,8 +31,8 @@ class ThreadPool(private val maxThreadCount: Int = 1) : Executor {
      * Presumes that [mLock] is acquired
      */
     private fun threadStarts() {
-        ThreadPoolWorker(this)
         threadCount += 1
+        ThreadPoolWorker(this).start()
     }
 
     private fun takeWorkItem(timeout: Long, unit: TimeUnit): Runnable? {
@@ -61,7 +60,7 @@ class ThreadPool(private val maxThreadCount: Int = 1) : Executor {
     private fun putWorkItem(workItem: Runnable) {
         mLock.withLock {
             val currentCount = threadCount
-            if (threadCount < maxThreadCount && workQueue.isNotEmpty()) {
+            if ((threadCount < maxThreadCount && workQueue.isNotEmpty()) || threadCount == 0) {
                 threadStarts()
             }
             workQueue.addLast(workItem)
