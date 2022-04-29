@@ -32,3 +32,27 @@ object SessionInfo {
         sessionCount.decrementAndGet()
     }
 }
+
+class AnotherSessionInfo {
+
+    private val sessionCount = AtomicInteger(0)
+    private val totalCount = AtomicInteger(0)
+
+    val currentSessions: Int
+        get() = sessionCount.get()
+
+    val totalSessions: Int
+        get() = totalCount.get()
+
+    fun createSession(): Int {
+        sessionCount.incrementAndGet()
+        return totalCount.incrementAndGet()
+    }
+
+    fun endSession() {
+        sessionCount.decrementAndGet()
+    }
+}
+
+val instance = AnotherSessionInfo()
+

@@ -184,40 +184,27 @@ For reference:
   * Lecture video (in Portuguese) _(coming soon)_
   * [Java Concurrency in Practice by Brian Goetz](https://jcip.net/), chapter 16
 
-### 28/04/2022 - The JVM Memory Model (JMM), continued (Script)
+### 28/04/2022 - The JVM Memory Model (JMM), continued
 * The JVM memory model, continued
-  * Safe publication
-  * Demo: Revisit the SessionInfo singleton in the EchoServer demo
-    * Step 1: Assert it is thread safe. Assert it is appropriately published.
-    * Step 2: Lets build an artesanal SessionInfo singleton.
-      * Step 2.1: Define a class using `var` all over the place instead of `val`
-      * Step 2.2: Define a singleton instance using var
-    * Guarantees for immutable values
-      * The merits of immutability, revisited
-* Exercising with the JMM
-  * Building simple non blocking algorithms
-    * Purpose and motivation
-    * Anatomy of lock free algorithms
-  * Demos:
-    * LockFreeCounter
-      * Step 1: Implement increment and decrement operations without using the required while
-      * Step 2: Build the test that shows the implementation flaws (by reusing the one from ThreadingHazardsTests)
-      * Step 3: Fix it
-      * Step 4: Change the signatures of increment and decrement so that they return the new value (with more than one get)
-      * Step 5: Buuild a test to show that the solution is incorrect
-      * Step 6: Fix it by making only one read. Revisit the coherence slide.
-    * LockFreeStack
-      * Step 1: Start by identifying the [original author, Treiber](https://en.wikipedia.org/wiki/Treiber_stack)
-      * Step 2: Define public contract (i.e. push, pop)
-      * Step 3: Define Node class and use an AtomicReference for the stack's top.
-      * Step 4: Implement the push operation
-      * Step 5: Implement the pop operation
-      * Step 6: Build test (by reusing the one from ThreadingHazardsTests)
-    * Exercise: LockFreeQueue
-      * Describe Michael-Scott algorithm
+  * Safe publication and initialization safety
+  * Guarantees for immutable values
+    * The merits of immutability, revisited
+* Non blocking synchronization
+  * Purpose and motivation
+  * Anatomy of lock free algorithms
+  * Support for CAS operations in the JVM
+* Demos: 
+  * Implementation of a _lock free_ counter
+  * Implementation of a _lock free_ stack (i.e. the [Treiber algorithm](https://en.wikipedia.org/wiki/Treiber_stack))
+* Brief description of the [Michael-Scott algorithm](https://www.cs.rochester.edu/~scott/papers/1996_PODC_queues.pdf)
 
  For reference:
   * Lecture video (in Portuguese) _(coming soon)_
   * [Java Concurrency in Practice by Brian Goetz](https://jcip.net/), chapters 15 and 16
   * [Java Memory Model Unlearning Experience, by Aleksey Shipilëv](https://www.youtube.com/watch?v=TK-7GCCDF_I)
   * [Close Encounters of The Java Memory Model Kind, by Aleksey Shipilëv](https://shipilev.net/blog/2016/close-encounters-of-jmm-kind/)
+
+## Week 9   
+### 03/05/2022 - Laboratory
+* Practical class dedicated to the [second assignment](../docs/assignments/PC_s2122v_SE2.pdf)
+
