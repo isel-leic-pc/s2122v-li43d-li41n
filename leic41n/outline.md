@@ -174,7 +174,7 @@ For reference:
   * The __Happens Before__ order of events
 
  For reference:
-  * Lecture video (in Portuguese) _(coming soon)_
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=X5vUWYqApQU&list=PL8XxoCaL3dBgPaKjgP87uSmKZ1MsIZ4rr&index=11)
   * [Java Concurrency in Practice by Brian Goetz](https://jcip.net/), chapter 16
 
 ### 28/04/2022 - The JVM Memory Model (JMM), continued
@@ -192,7 +192,7 @@ For reference:
 * Brief description of the [Michael-Scott algorithm](https://www.cs.rochester.edu/~scott/papers/1996_PODC_queues.pdf)
 
  For reference:
-  * Lecture video (in Portuguese) _(coming soon)_
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=61TSLyXJeTU&list=PL8XxoCaL3dBgPaKjgP87uSmKZ1MsIZ4rr&index=12)
   * [Java Concurrency in Practice by Brian Goetz](https://jcip.net/), chapters 15 and 16
   * [Java Memory Model Unlearning Experience, by Aleksey Shipilëv](https://www.youtube.com/watch?v=TK-7GCCDF_I)
   * [Close Encounters of The Java Memory Model Kind, by Aleksey Shipilëv](https://shipilev.net/blog/2016/close-encounters-of-jmm-kind/)
