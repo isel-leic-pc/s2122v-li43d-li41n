@@ -208,3 +208,21 @@ For reference:
 ### 03/05/2022 - Laboratory
 * Practical class dedicated to the [second assignment](../docs/assignments/PC_s2122v_SE2.pdf)
 
+### 05/05/2022 - Asynchronous I/O (Script)
+* Asynchronous I/O
+  * Purpose and motivation
+  * Revisiting Node.js threading model: merits, guarantees and shortcomings
+* Asynchronous I/O on the JVM - NIO2
+  * Threading model
+  * Consequences of the _callback_ passing style (a.k.a Continuation Passing Style)
+* Demo: EchoServer with NIO2
+  * Step 1 - Accept connections using the `AsynchronousServerSocketChannel.accept()` that returns a `Future`
+    * Step 1.2 - Demonstrate the use of the _callback_ based `AsynchronousServerSocketChannel.accept()`
+    * Step 1.3 - Resume the use of the Future based version
+  * Step 2 - Greet clients and terminate imediately: callback based `AsynchronousSocketChannel.write()` 
+    * Step 2.1 - Greet each client twice
+    * Step 2.2 - Check which threads are executing the callbacks and discuss the provided callback execution guarantees (or absence thereof)
+    * Step 2.3 - OK, lets go back to a single greeting
+  * Step 3 - Echo a single message sent by clients, and then terminate. Messages are limited to 1024 bytes
+  * Step 4 - Echo messages until exit is received. Use the Continuation Passing Style.
+  * Step 5 - Send goodbye message
