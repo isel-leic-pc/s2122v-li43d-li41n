@@ -1,3 +1,5 @@
+@file:Suppress("SameParameterValue")
+
 package pt.isel.leic.pc.echo
 
 import java.util.LinkedList
@@ -20,6 +22,7 @@ class ThreadPool(private val maxThreadCount: Int = 1) : Executor {
     }
 
     private var threadCount = 0
+    private var blockedThreads = 0
 
     private val workQueue = LinkedList<Runnable>()
     private val mLock = ReentrantLock()
@@ -43,28 +46,34 @@ class ThreadPool(private val maxThreadCount: Int = 1) : Executor {
             }
 
             var remainingTime = unit.toNanos(timeout)
-            while (true) {
+            blockedThreads += 1
+            try {
+                while (true) {
 
-                remainingTime = mCondition.awaitNanos(remainingTime)
+                    remainingTime = mCondition.awaitNanos(remainingTime)
 
-                if (workQueue.isNotEmpty()) {
-                    return workQueue.removeFirst()
+                    if (workQueue.isNotEmpty()) {
+                        return workQueue.removeFirst()
+                    }
+
+                    if (remainingTime <= 0)
+                        return null
                 }
-
-                if (remainingTime <= 0)
-                    return null
+            }
+            finally {
+                blockedThreads -= 1
             }
         }
     }
 
     private fun putWorkItem(workItem: Runnable) {
         mLock.withLock {
-            val currentCount = threadCount
-            if ((threadCount < maxThreadCount && workQueue.isNotEmpty()) || threadCount == 0) {
+            if (threadCount < maxThreadCount && blockedThreads == 0) {
                 threadStarts()
             }
+
             workQueue.addLast(workItem)
-            if (currentCount != threadCount)
+            if (blockedThreads != 0)
                 mCondition.signal()
         }
     }
