@@ -215,10 +215,21 @@ For reference:
 ## Week 10   
 ### 10/05/2022 - Asynchronous I/O, continued (Script)
 * Asynchronous I/O on the JVM - [NIO2](https://docs.oracle.com/javase/8/docs/technotes/guides/io/index.html)
+  * Consequences of the _callback_ passing style (a.k.a Continuation Passing Style), continued
   * API design based on __futures__ and __promises__
-  * Promises on the JVM (a.k.a `CompletableFuture`)
+  * Promises in Javascript, revisited
+    * Threading model
+    * Demo using a promise resolved through timeout
+  * Promises on the JVM (a.k.a `java.util.concurrent.CompletableFuture`)
+    * Purpose and motivation
+    * Threading model
+    * Demo using a promise resolved through timeout (with `Timer` and `TimerTask`)
+    * Demo using the asynchronous API of `java.net.http.HttpClient` (i.e. `sendAsync`)
+      1. `thenApply` (a.k.a `map`) and variants (`thenAccept` and `thenRun`) 
+      2. `whenComplete`
+      3. `thenCompose` (a.k.a `flatMap`)
+      4. `***Async` variants
 * Demo: Materialization on EchoServer
-  * Step 1 - Echo messages until exit is received. Use the Continuation Passing Style.
   * ...
 
  For reference:
