@@ -205,7 +205,7 @@ For reference:
 * Asynchronous I/O
   * Purpose and motivation
   * Revisiting Node.js threading model: merits, guarantees and shortcomings
-* Asynchronous I/O on the JVM - NIO2
+* Asynchronous I/O on the JVM - [NIO2](https://docs.oracle.com/javase/8/docs/technotes/guides/io/index.html)
   * Threading model
   * Consequences of the _callback_ passing style (a.k.a Continuation Passing Style)
 
@@ -213,24 +213,27 @@ For reference:
   * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=mu06udbPid8&list=PL8XxoCaL3dBgPaKjgP87uSmKZ1MsIZ4rr&index=14)
 
 ## Week 10   
-### 10/05/2022 - Asynchronous I/O, continued (Script)
-* Asynchronous I/O on the JVM - [NIO2](https://docs.oracle.com/javase/8/docs/technotes/guides/io/index.html)
+### 10/05/2022 - Asynchronous I/O, continued
+* Asynchronous I/O on the JVM
   * Consequences of the _callback_ passing style (a.k.a Continuation Passing Style), continued
   * API design based on __futures__ and __promises__
   * Promises in Javascript, revisited
+    * Purpose and motivation
     * Threading model
-    * Demo using a promise resolved through timeout
   * Promises on the JVM (a.k.a `java.util.concurrent.CompletableFuture`)
     * Purpose and motivation
     * Threading model
-    * Demo using a promise resolved through timeout (with `Timer` and `TimerTask`)
-    * Demo using the asynchronous API of `java.net.http.HttpClient` (i.e. `sendAsync`)
-      1. `thenApply` (a.k.a `map`) and variants (`thenAccept` and `thenRun`) 
-      2. `whenComplete`
-      3. `thenCompose` (a.k.a `flatMap`)
-      4. `***Async` variants
-* Demo: Materialization on EchoServer
-  * ...
+
+ For reference:
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=GH6n9_yoeM0&list=PL8XxoCaL3dBgPaKjgP87uSmKZ1MsIZ4rr&index=14)
+
+### 12/05/2022 - No class
+
+## Week 11   
+### 17/05/2022 - Asynchronous I/O, continued (Script)
+* Asynchronous I/O on the JVM - [NIO2](https://docs.oracle.com/javase/8/docs/technotes/guides/io/index.html)
+* ...
 
  For reference:
   * Lecture video (in Portuguese) _(coming soon)_
+

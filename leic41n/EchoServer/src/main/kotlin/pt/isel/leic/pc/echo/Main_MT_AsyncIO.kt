@@ -57,24 +57,36 @@ private fun greet(sessionSocket: AsynchronousSocketChannel, andThen: (Asynchrono
 }
 
 private fun handleEchoes(sessionSocket: AsynchronousSocketChannel, andThen: (AsynchronousSocketChannel) -> Unit) {
-
     val buffer = ByteBuffer.allocate(1024)
+    handleEcho(buffer, sessionSocket, 1, andThen)
+}
 
+private fun handleEcho(
+    buffer: ByteBuffer,
+    sessionSocket: AsynchronousSocketChannel,
+    echoCount: Int,
+    andThen: (AsynchronousSocketChannel) -> Unit
+) {
     sessionSocket.read(buffer, null, object : CompletionHandler<Int, Any?> {
         override fun completed(result: Int?, attachment: Any?) {
             val clientMessage = decoder.decode(buffer.flip()).toString().trim()
-            val echo = "(1) Echo: $clientMessage\n"
 
-            sessionSocket.write(encoder.encode(CharBuffer.wrap(echo)), null, object : CompletionHandler<Int, Any?> {
-                override fun completed(result: Int?, attachment: Any?) {
-                    andThen(sessionSocket)
-                }
+            if (clientMessage == EXIT)
+                andThen(sessionSocket)
+            else {
+                val echo = "($echoCount) Echo: $clientMessage\n"
+                sessionSocket.write(encoder.encode(CharBuffer.wrap(echo)), null, object : CompletionHandler<Int, Any?> {
+                    override fun completed(result: Int?, attachment: Any?) {
+                        buffer.clear()
+                        handleEcho(buffer, sessionSocket, echoCount + 1, andThen)
+                    }
 
-                override fun failed(exc: Throwable?, attachment: Any?) {
-                    logger.error("Failed to echo message to the client", exc)
-                    sessionCleanup(sessionSocket)
-                }
-            })
+                    override fun failed(exc: Throwable?, attachment: Any?) {
+                        logger.error("Failed to echo message to the client", exc)
+                        sessionCleanup(sessionSocket)
+                    }
+                })
+            }
         }
 
         override fun failed(exc: Throwable?, attachment: Any?) {
@@ -83,6 +95,7 @@ private fun handleEchoes(sessionSocket: AsynchronousSocketChannel, andThen: (Asy
         }
 
     })
+
 
 }
 

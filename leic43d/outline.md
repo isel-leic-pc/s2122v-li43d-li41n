@@ -220,24 +220,28 @@ For reference:
   * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=OzxDAR37AC8&list=PL8XxoCaL3dBiv-3pHZLbFGYsQiJa9X73o&index=13)
 
 ## Week 10   
-### 10/05/2022 - Asynchronous I/O, continued (Script)
+### 10/05/2022 - Asynchronous I/O, continued
 * Asynchronous I/O on the JVM - [NIO2](https://docs.oracle.com/javase/8/docs/technotes/guides/io/index.html)
   * Consequences of the _callback_ passing style (a.k.a Continuation Passing Style), continued
   * API design based on __futures__ and __promises__
   * Promises in Javascript, revisited
+    * Purpose and motivation
     * Threading model
-    * Demo using a promise resolved through timeout
   * Promises on the JVM (a.k.a `java.util.concurrent.CompletableFuture`)
     * Purpose and motivation
     * Threading model
-    * Demo using a promise resolved through timeout (with `Timer` and `TimerTask`)
-    * Demo using the asynchronous API of `java.net.http.HttpClient` (i.e. `sendAsync`)
-      1. `thenApply` (a.k.a `map`) and variants (`thenAccept` and `thenRun`) 
-      2. `whenComplete`
-      3. `thenCompose` (a.k.a `flatMap`)
-      4. `***Async` variants
-* Demo: Materialization on EchoServer
-  * ...
+
+ For reference:
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=mpknoxue_bo&list=PL8XxoCaL3dBiv-3pHZLbFGYsQiJa9X73o&index=14)
+
+### 12/05/2022 - No class
+
+## Week 11   
+### 17/05/2022 - Asynchronous I/O, continued (Script)
+* Asynchronous I/O on the JVM - [NIO2](https://docs.oracle.com/javase/8/docs/technotes/guides/io/index.html)
+* ...
 
  For reference:
   * Lecture video (in Portuguese) _(coming soon)_
+
+
