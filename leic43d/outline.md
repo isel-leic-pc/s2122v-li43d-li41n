@@ -239,7 +239,21 @@ For reference:
 ## Week 11   
 ### 17/05/2022 - Asynchronous I/O, continued (Script)
 * Asynchronous I/O on the JVM - [NIO2](https://docs.oracle.com/javase/8/docs/technotes/guides/io/index.html)
-* ...
+  * Building a single-threaded echo server (Node's threading model in NIO2)
+  * The need for throttling, revisited
+  * Orchestrating execution in asynchronous environments ("asynchronizers")
+* Kotlin Coroutines
+  * Purpose and motivation
+  * Coroutines lifecycle
+    * Creation, execution and completion
+    * Scheduling
+  * Suspending functions
+    * Purpose and motivation
+    * Remember: *Suspend execution without blocking the underlying thread*
+  * Elements of the programming model
+    * Coroutine builders: `runBlocking`, `launch` and `async`
+    * Coroutine dispatchers: `Dispatchers`
+    * Coroutine context
 
  For reference:
   * Lecture video (in Portuguese) _(coming soon)_

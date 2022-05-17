@@ -16,8 +16,8 @@ import java.nio.channels.CompletionHandler
 private const val EXIT = "exit"
 private val logger = LoggerFactory.getLogger("Async IO with NIO")
 
-val encoder = Charsets.UTF_8.newEncoder()
-val decoder = Charsets.UTF_8.newDecoder()
+private val encoder = Charsets.UTF_8.newEncoder()
+private val decoder = Charsets.UTF_8.newDecoder()
 
 /**
  * The server's entry point.
