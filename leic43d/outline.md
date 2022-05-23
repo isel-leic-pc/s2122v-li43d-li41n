@@ -237,25 +237,42 @@ For reference:
 ### 12/05/2022 - No class
 
 ## Week 11   
-### 17/05/2022 - Asynchronous I/O, continued (Script)
+### 17/05/2022 - Asynchronous I/O, continued, and Kotlin coroutines
 * Asynchronous I/O on the JVM - [NIO2](https://docs.oracle.com/javase/8/docs/technotes/guides/io/index.html)
   * Building a single-threaded echo server (Node's threading model in NIO2)
   * The need for throttling, revisited
   * Orchestrating execution in asynchronous environments ("asynchronizers")
-* Kotlin Coroutines
+* [Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-basics.html)
   * Purpose and motivation
   * Coroutines lifecycle
     * Creation, execution and completion
     * Scheduling
-  * Suspending functions
+  * [Suspending functions](https://kotlinlang.org/docs/composing-suspending-functions.html)
     * Purpose and motivation
     * Remember: *Suspend execution without blocking the underlying thread*
   * Elements of the programming model
     * Coroutine builders: `runBlocking`, `launch` and `async`
-    * Coroutine dispatchers: `Dispatchers`
-    * Coroutine context
 
  For reference:
-  * Lecture video (in Portuguese) _(coming soon)_
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=hFWVNIkciwY&list=PL8XxoCaL3dBiv-3pHZLbFGYsQiJa9X73o&index=15)
+  * ["Blocking Threads, suspending coroutines", by Roman Elizarov](https://elizarov.medium.com/blocking-threads-suspending-coroutines-d33e11bf4761)
+  * ["An Introduction to Koltin Coroutines", by Pedro Félix](https://labs.pedrofelix.org/guides/kotlin/coroutines/)
 
+### 19/05/2022 - Kotlin coroutines, continued
+* [Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-basics.html), continued
+    * Remember: *Suspend execution without blocking the underlying thread*
+  * Elements of the programming model, continued
+    * [Coroutine context](https://kotlinlang.org/docs/coroutine-context-and-dispatchers.html)
+    * Dispatching coroutines for execution
+      * Coroutine dispatchers accessible through `Dispatchers`
+      * Custom dispatchers, introduction
+    * Design goal: Structured concurrency
+      * Purpose and motivation
+      * [Coroutine Scope](https://kotlinlang.org/docs/coroutine-context-and-dispatchers.html#coroutine-scope)
+    * Adapting asynchronous APIs to coroutines
+      * The building block `suspendCoroutine`
+
+ For reference:
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=0MC9L5I9Dcc&list=PL8XxoCaL3dBiv-3pHZLbFGYsQiJa9X73o&index=16)
+  * ["Coroutine Context and Scope", by Roman Elizarov](https://elizarov.medium.com/coroutine-context-and-scope-c8b255d59055)
 
