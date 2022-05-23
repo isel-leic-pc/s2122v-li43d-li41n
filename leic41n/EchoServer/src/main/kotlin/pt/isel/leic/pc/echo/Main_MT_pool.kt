@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
     logger.info("Process id is = ${ProcessHandle.current().pid()}. Starting echo server at port $port")
     val pool = ThreadPool(6)
     while (true) {
-        //logger.info("Ready to accept connections")
+        logger.info("Ready to accept connections")
         val sessionSocket = serverSocket.accept()
         if (pool.queueSize == 100) {
             sessionSocket.getOutputStream().write("Sorry!\n".toByteArray())
