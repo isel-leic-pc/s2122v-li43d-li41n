@@ -28,12 +28,9 @@ private class AsyncSemaphore(initialUnits: Int) {
 
     fun release() {
         guard.withLock {
-            if (requests.isEmpty()) {
-                units += 1
-                return
-            }
-            requests.removeFirst().complete(Unit)
-        }
+            if (requests.isEmpty()) { units += 1; null }
+            else { requests.removeFirst() }
+        }?.complete(Unit)
     }
 
     fun acquire(): CompletableFuture<Unit> {

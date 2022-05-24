@@ -1,12 +1,16 @@
 package pt.isel.leic.pc.echo.coroutines
 
 import createChannel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import pt.isel.leic.pc.echo.SessionInfo
 import pt.isel.leic.pc.echo.println
@@ -30,6 +34,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantLock
+import javax.swing.text.html.HTML.Tag.I
 import kotlin.concurrent.withLock
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -59,8 +64,7 @@ fun main(args: Array<String>) {
     val serverSocket = createChannel("localhost", port, executor)
 
     val throttle = AsyncSemaphore(2)
-    val scope = CoroutineScope(executor.asCoroutineDispatcher())
-    scope.launch {
+    val serverLoop = CoroutineScope(executor.asCoroutineDispatcher()).launch {
         while (true) {
             throttle.acquire().await()
             logger.info("Ready to accept connections")
@@ -72,10 +76,14 @@ fun main(args: Array<String>) {
         }
     }
 
+    // Emulates the server console
     readln()
 
+
     logger.info("Shutting down...")
-    scope.cancel()
+    runBlocking {
+        serverLoop.cancelAndJoin()
+    }
 
     executor.shutdown()
     executor.awaitTermination(10, TimeUnit.SECONDS)
@@ -87,16 +95,33 @@ suspend fun handleEchoSession(sessionSocket: AsynchronousSocketChannel) {
     val sessionId = createSession()
     var echoCount = 0
     sessionSocket.use {
-        sessionSocket.suspendingWriteLine("Welcome client number $sessionId!")
-        sessionSocket.suspendingWriteLine("I'll echo everything you send me. Finish with '$EXIT'. Ready when you are!")
-        while (true) {
-            val line = sessionSocket.suspendingReadLine()
-            if (line == EXIT)
-                break
-            logger.info("Received line number '${++echoCount}'. Echoing it.")
-            sessionSocket.suspendingWriteLine("($echoCount) Echo: $line")
+        try {
+            sessionSocket.suspendingWriteLine("Welcome client number $sessionId!")
+            sessionSocket.suspendingWriteLine("I'll echo everything you send me. Finish with '$EXIT'. Ready when you are!")
+            while (true) {
+                when (val line = sessionSocket.suspendingReadLine(5, TimeUnit.MINUTES)) {
+                    null -> {
+                        sessionSocket.suspendingWriteLine("Session closed for inactivity")
+                        break
+                    }
+                    EXIT -> {
+                        sessionSocket.suspendingWriteLine("Bye!")
+                        break
+                    }
+                    else -> {
+                        logger.info("Received line number '${++echoCount}'. Echoing it.")
+                        sessionSocket.suspendingWriteLine("($echoCount) Echo: $line")
+                    }
+                }
+            }
         }
-        sessionSocket.suspendingWriteLine("Bye!")
+        catch (cancelled: CancellationException) {
+            logger.info("I was cancelled.")
+            withContext(NonCancellable) {
+                logger.info("Saying goodbye.")
+                sessionSocket.suspendingWriteLine("The server is shutting down. Please come back later.")
+            }
+        }
     }
 }
 
@@ -110,10 +135,12 @@ private class AsyncSemaphore(initialUnits: Int) {
         guard.withLock {
             if (requests.isEmpty()) {
                 units += 1
-                return
+                null
             }
-            requests.removeFirst().complete(Unit)
-        }
+            else {
+                requests.removeFirst()
+            }
+        }?.complete(Unit)
     }
 
     fun acquire(): CompletableFuture<Unit> {

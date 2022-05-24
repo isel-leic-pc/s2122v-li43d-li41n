@@ -1,3 +1,6 @@
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.slf4j.LoggerFactory
 import java.net.InetSocketAddress
 import java.nio.ByteBuffer
@@ -6,7 +9,10 @@ import java.nio.channels.AsynchronousChannelGroup
 import java.nio.channels.AsynchronousServerSocketChannel
 import java.nio.channels.AsynchronousSocketChannel
 import java.nio.channels.CompletionHandler
+import java.nio.channels.InterruptedByTimeoutException
 import java.util.concurrent.ExecutorService
+import java.util.concurrent.TimeUnit
+import kotlin.coroutines.coroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -24,7 +30,7 @@ fun createChannel(hostname: String, port: Int, executor: ExecutorService): Async
 }
 
 suspend fun AsynchronousServerSocketChannel.suspendingAccept(): AsynchronousSocketChannel {
-    return suspendCoroutine { continuation ->
+    return suspendCancellableCoroutine { continuation ->
         accept(null, object : CompletionHandler<AsynchronousSocketChannel, Any?> {
             override fun completed(socket: AsynchronousSocketChannel, attachment: Any?) {
                 logger.info("Accepted client connection")
@@ -40,7 +46,7 @@ suspend fun AsynchronousServerSocketChannel.suspendingAccept(): AsynchronousSock
 }
 
 suspend fun AsynchronousSocketChannel.suspendingWriteLine(line: String): Int {
-    return suspendCoroutine {continuation ->
+    return suspendCancellableCoroutine {continuation ->
         val toSend = CharBuffer.wrap(line + "\n")
         // This is NOT production ready! It's a DEMO!
         // E.g. We would need to deal with the case when not all the string's chars are written in one call
@@ -58,12 +64,12 @@ suspend fun AsynchronousSocketChannel.suspendingWriteLine(line: String): Int {
     }
 }
 
-suspend fun AsynchronousSocketChannel.suspendingReadLine(): String {
-    return suspendCoroutine { continuation ->
+suspend fun AsynchronousSocketChannel.suspendingReadLine(timeout: Long = 0, unit: TimeUnit = TimeUnit.MILLISECONDS): String? {
+    return suspendCancellableCoroutine { continuation ->
         val buffer = ByteBuffer.allocate(1024)
         // This is NOT production ready! It's a DEMO!
         // E.g. We would need to deal with the case when read does not contain the whole line
-        read(buffer, null, object : CompletionHandler<Int, Any?> {
+        read(buffer, timeout, unit, null, object : CompletionHandler<Int, Any?> {
             override fun completed(result: Int, attachment: Any?) {
                 logger.info("Read succeeded.")
                 val received = decoder.decode(buffer.flip()).toString().trim()
@@ -72,7 +78,12 @@ suspend fun AsynchronousSocketChannel.suspendingReadLine(): String {
 
             override fun failed(error: Throwable, attachment: Any?) {
                 logger.error("Read failed.")
-                continuation.resumeWithException(error)
+                if (error is InterruptedByTimeoutException) {
+                    continuation.resume(null)
+                }
+                else {
+                    continuation.resumeWithException(error)
+                }
             }
         })
     }
