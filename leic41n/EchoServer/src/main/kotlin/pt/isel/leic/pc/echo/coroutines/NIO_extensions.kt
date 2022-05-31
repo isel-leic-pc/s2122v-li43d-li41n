@@ -45,7 +45,7 @@ suspend fun AsynchronousServerSocketChannel.suspendingAccept(): AsynchronousSock
 
 suspend fun AsynchronousSocketChannel.suspendingWriteLine(text: String): Int {
     return suspendCoroutine { continuation ->
-        val toSend = CharBuffer.wrap(text + "\n")
+        val toSend = CharBuffer.wrap(text + "\r\n")
         // This is NOT production ready! It's a DEMO!
         // E.g. We would need to deal with the case when not all the string's chars are written in one call
         write(encoder.encode(toSend), null, object : CompletionHandler<Int, Any?> {

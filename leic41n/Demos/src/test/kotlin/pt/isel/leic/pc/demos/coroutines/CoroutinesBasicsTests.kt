@@ -1,11 +1,11 @@
 package pt.isel.leic.pc.demos.coroutines
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.slf4j.LoggerFactory
 import java.util.concurrent.CountDownLatch
 
@@ -85,5 +85,40 @@ class CoroutinesBasicsTests {
             }.start()
         }
         done.await()
+    }
+
+    @Test
+    fun `cancel parent coroutine`() {
+        logger.info("before runBlocking")
+
+        runBlocking {
+            logger.info("runBlocking starts")
+
+            val parentJob = launch {
+                logger.info("Starting parent")
+                repeat(5) {
+                    launch {
+                        try {
+                            logger.info("Starting child")
+                            while(true) {
+                                delay(1000)
+                            }
+                            logger.info("Ending child")
+                        }
+                        finally {
+                            // Do cleanup
+                        }
+                    }
+                }
+
+                logger.info("Ending parent")
+            }
+
+            delay(5000)
+            parentJob.cancel()
+            logger.info("runBlocking ends")
+        }
+
+        logger.info("after runBlocking")
     }
 }

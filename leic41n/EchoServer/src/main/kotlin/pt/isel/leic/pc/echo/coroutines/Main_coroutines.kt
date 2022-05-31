@@ -1,5 +1,6 @@
 package pt.isel.leic.pc.echo.coroutines
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -42,10 +43,11 @@ private class AsyncSemaphore(initialUnits: Int) {
         guard.withLock {
             if (requests.isEmpty()) {
                 units += 1
+                null
             } else {
-                requests.removeFirst().complete(Unit)
+                requests.removeFirst()
             }
-        }
+        }?.complete(Unit)
     }
 }
 
@@ -63,7 +65,7 @@ fun main(args: Array<String>) {
 
     val throttle = AsyncSemaphore(2)
 
-    runBlocking(executor.asCoroutineDispatcher()) {
+    CoroutineScope(executor.asCoroutineDispatcher()).launch {
         while (true) {
             throttle.acquire().await()
             logger.info("Ready to accept connections")
@@ -78,6 +80,13 @@ fun main(args: Array<String>) {
             }
         }
     }
+
+    logger.info("Blocking on readln")
+    readln()
+
+    // Initiate shutdown ...
+
+
 }
 
 suspend fun <T> CompletableFuture<T>.await(): T {
