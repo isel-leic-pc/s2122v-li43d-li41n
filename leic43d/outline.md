@@ -276,3 +276,30 @@ For reference:
   * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=0MC9L5I9Dcc&list=PL8XxoCaL3dBiv-3pHZLbFGYsQiJa9X73o&index=16)
   * ["Coroutine Context and Scope", by Roman Elizarov](https://elizarov.medium.com/coroutine-context-and-scope-c8b255d59055)
 
+## Week 12   
+### 24/05/2022 - Kotlin coroutines, continued
+* Kotlin Coroutines, continued
+  * Coding in the real world: [Cancellation and timeouts](https://kotlinlang.org/docs/cancellation-and-timeouts.html)
+    * Purpose and motivation
+    * Remember: *Cancelation must be cooperative*
+  * Building blocks `suspendCancellableCoroutine` and `withContext`
+
+ For reference:
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=9iiW8B9Awno&list=PL8XxoCaL3dBiv-3pHZLbFGYsQiJa9X73o&index=17)
+
+### 26/05/2022 - Laboratory
+* Practical class dedicated to the [third assignment](../docs/assignments/PC_s2122v_SE3.pdf)
+
+## Week 13   
+### 31/05/2022 - Kotlin coroutines, continued (preview)
+* Kotlin Coroutines, continued
+* Considerations on the structure of software solutions using coroutines
+* Coroutines' orchestration using the _consumer-producer_ pattern
+  * [The `Channel` building block](https://kotlinlang.org/docs/channels.html)
+
+ For reference:
+  * Lecture video (in Portuguese) _(coming soon)_
+  * [Channel API](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.channels/-channel/index.html)
+
+### 02/06/2022 - Laboratory
+* Practical class dedicated to the [third assignment](../docs/assignments/PC_s2122v_SE3.pdf)
