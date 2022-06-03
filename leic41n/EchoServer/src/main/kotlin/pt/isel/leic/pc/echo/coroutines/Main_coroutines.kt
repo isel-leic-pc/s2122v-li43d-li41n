@@ -1,10 +1,14 @@
 package pt.isel.leic.pc.echo.coroutines
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import pt.isel.leic.pc.echo.SessionInfo
 import java.nio.channels.AsynchronousSocketChannel
@@ -56,41 +60,44 @@ private class AsyncSemaphore(initialUnits: Int) {
  * The server's entry point.
  */
 fun main(args: Array<String>) {
-    val port = if (args.isEmpty() || args[0].toIntOrNull() == null) 8000 else args[0].toInt()
 
-    logger.info("Process id is = ${ProcessHandle.current().pid()}. Starting echo server at port $port")
+    runBlocking {
+        val port = if (args.isEmpty() || args[0].toIntOrNull() == null) 8000 else args[0].toInt()
 
-    val executor = Executors.newSingleThreadExecutor()
-    val serverSocket = createServerChannel("localhost", port, executor)
+        logger.info("Process id is = ${ProcessHandle.current().pid()}. Starting echo server at port $port")
 
-    val throttle = AsyncSemaphore(2)
+        val executor = Executors.newSingleThreadExecutor()
+        val serverSocket = createServerChannel("localhost", port, executor)
 
-    CoroutineScope(executor.asCoroutineDispatcher()).launch {
-        while (true) {
-            throttle.acquire().await()
-            logger.info("Ready to accept connections")
-            val sessionSocket = serverSocket.suspendingAccept()
-            launch {
-                try {
-                    handleEchoSession(sessionSocket)
-                }
-                finally {
-                    throttle.release()
+        val throttle = AsyncSemaphore(2)
+
+        val acceptJob = CoroutineScope(executor.asCoroutineDispatcher()).launch {
+            while (true) {
+                throttle.acquire().await()
+                logger.info("Ready to accept connections")
+                val sessionSocket = serverSocket.suspendingAccept()
+                launch {
+                    try {
+                        handleEchoSession(sessionSocket)
+                    }
+                    finally {
+                        throttle.release()
+                    }
                 }
             }
         }
+
+        logger.info("Blocking on readln")
+        val gooodByeMesssage = readln()
+
+        // Initiate shutdown ...
+        acceptJob.cancelAndJoin()
+        executor.shutdown()
     }
-
-    logger.info("Blocking on readln")
-    readln()
-
-    // Initiate shutdown ...
-
-
 }
 
 suspend fun <T> CompletableFuture<T>.await(): T {
-    return suspendCoroutine { continuation ->
+    return suspendCancellableCoroutine { continuation ->
         this.whenComplete { result, error ->
             if (error != null)
                 continuation.resumeWithException(error)
@@ -107,14 +114,23 @@ suspend fun handleEchoSession(sessionSocket: AsynchronousSocketChannel) {
         logger.info("Accepted session $sessionId")
         sessionSocket.suspendingWriteLine("Welcome client number $sessionId!")
         sessionSocket.suspendingWriteLine("I'll echo everything you send me. Finish with '$EXIT'. Ready when you are!")
-        while (true) {
-            val line = sessionSocket.suspendingReadLine()
-            if (line == EXIT)
-                break
-            logger.info("Received line number '${++echoCount}'. Echoing it.")
-            sessionSocket.suspendingWriteLine("($echoCount) Echo: $line")
+        try {
+            while (true) {
+                val line = sessionSocket.suspendingReadLine()
+                if (line == EXIT)
+                    break
+                logger.info("Received line number '${++echoCount}'. Echoing it.")
+                sessionSocket.suspendingWriteLine("($echoCount) Echo: $line")
+            }
+            sessionSocket.suspendingWriteLine("Bye!")
         }
-        sessionSocket.suspendingWriteLine("Bye!")
-        SessionInfo.endSession()
+        catch (cancelled: CancellationException) {
+            withContext(NonCancellable) {
+                sessionSocket.suspendingWriteLine("Server is shutting down for maintenance. Please come back later")
+            }
+        }
+        finally {
+            SessionInfo.endSession()
+        }
     }
 }
