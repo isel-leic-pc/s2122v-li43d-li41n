@@ -286,12 +286,14 @@ For reference:
 ### 31/05/2022 - Laboratory
 * Practical class dedicated to the [third assignment](../docs/assignments/PC_s2122v_SE3.pdf)
 
-### 02/06/2022 - Kotlin coroutines, continued (preview)
+### 02/06/2022 - Kotlin coroutines, continued
 * Kotlin Coroutines, continued
+  * Coding in the real world: [Cancellation and timeouts](https://kotlinlang.org/docs/cancellation-and-timeouts.html)
+  * Building blocks `suspendCancellableCoroutine` and `withContext`
 * Considerations on the structure of software solutions using coroutines
 * Coroutines' orchestration using the _consumer-producer_ pattern
   * [The `Channel` building block](https://kotlinlang.org/docs/channels.html)
 
  For reference:
-  * Lecture video (in Portuguese) _(coming soon)_
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=7t0B0K1OdrQ&list=PL8XxoCaL3dBgPaKjgP87uSmKZ1MsIZ4rr&index=18)
   * [Channel API](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.channels/-channel/index.html)
