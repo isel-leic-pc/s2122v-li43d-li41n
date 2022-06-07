@@ -1,14 +1,20 @@
 package pt.isel.leic.pc.echo.solution
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.slf4j.LoggerFactory
 import java.net.InetSocketAddress
+import java.nio.channels.AsynchronousServerSocketChannel
+import java.nio.channels.ClosedChannelException
+import java.time.Year
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 private val logger = LoggerFactory.getLogger(Server::class.java)
 
@@ -31,6 +37,11 @@ class Server(
     private var state = State.NOT_STARTED
     private val guard = Mutex()
 
+    private lateinit var serverLoopJob: Job
+    private lateinit var serverSocketChannel: AsynchronousServerSocketChannel
+
+    suspend fun isStarted() = guard.withLock { state == State.STARTED }
+
     /**
      * Starts the server, preparing it to accept requests for echo sessions.
      * @param address   the address on which the server will be listening
@@ -42,13 +53,22 @@ class Server(
             if (state != State.NOT_STARTED)
                 throw IllegalStateException("Server has already been started")
 
-            val serverSocket = createServerChannel(address, executor)
-            val serverLoopJob = CoroutineScope(executor.asCoroutineDispatcher()).launch {
-                while(true) {
-                    // TODO: throttling and session cleanup
-                    logger.info("Ready to accept connections")
-                    val sessionSocket = serverSocket.suspendingAccept()
-                    sessionManager.createSession(sessionSocket, this).start()
+            serverSocketChannel = createServerChannel(address, executor)
+            serverLoopJob = CoroutineScope(executor.asCoroutineDispatcher()).launch {
+                try {
+                    while(isStarted()) {
+                        // TODO: throttling
+                        logger.info("Ready to accept connections")
+                        val sessionSocket = serverSocketChannel.suspendingAccept()
+                        sessionManager.createSession(sessionSocket, this)
+                            .start()
+                            .onStop {
+                                sessionManager.removeSession(it.id)
+                            }
+                    }
+                }
+                catch (ex: ClosedChannelException) {
+                    logger.info("Server is shutting down")
                 }
             }
 
@@ -66,9 +86,17 @@ class Server(
             if (state != State.STARTED)
                 throw IllegalStateException("Server is not started")
 
-            TODO("Not yet implemented")
-
             state = State.STOPPED
         }
+
+        sessionManager.roaster.forEach {
+            it.stop(message)
+        }
+
+        serverSocketChannel.close()
+        serverLoopJob.cancelAndJoin()
+
+        executor.shutdown()
+        executor.awaitTermination(0, TimeUnit.MILLISECONDS)
     }
 }
