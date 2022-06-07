@@ -303,3 +303,22 @@ For reference:
 
 ### 02/06/2022 - Laboratory
 * Practical class dedicated to the [third assignment](../docs/assignments/PC_s2122v_SE3.pdf)
+
+## Week 14   
+### 07/06/2022 - Kotlin coroutines, continued (preview)
+* Kotlin Coroutines, continued
+* Considerations on the structure of software solutions using coroutines, continued
+  * Coroutines' orchestration using the _consumer-producer_ pattern
+    * [The `Channel` building block](https://kotlinlang.org/docs/channels.html)
+  * Kotlin Flows, introduction
+    * Purpose and motivation
+    * Basic use cases
+
+ For reference:
+  * Lecture video (in Portuguese) _(coming soon)_
+  * [Cold flows, hot channels](https://elizarov.medium.com/cold-flows-hot-channels-d74769805f9)
+  * [Simple design of Kotlin Flow](https://elizarov.medium.com/simple-design-of-kotlin-flow-4725e7398c4c)
+
+### 09/06/2022 - Laboratory
+* Practical class dedicated to the [third assignment](../docs/assignments/PC_s2122v_SE3.pdf)
+
