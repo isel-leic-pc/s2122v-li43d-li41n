@@ -3,38 +3,23 @@ package pt.isel.leic.pc.echo.coroutines
 import createChannel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
-import pt.isel.leic.pc.echo.SessionInfo
-import pt.isel.leic.pc.echo.println
 import suspendingAccept
 import suspendingReadLine
 import suspendingWriteLine
-import java.io.BufferedReader
-import java.io.BufferedWriter
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
-import java.net.InetSocketAddress
-import java.nio.ByteBuffer
-import java.nio.CharBuffer
-import java.nio.channels.AsynchronousChannelGroup
-import java.nio.channels.AsynchronousServerSocketChannel
 import java.nio.channels.AsynchronousSocketChannel
-import java.nio.channels.CompletionHandler
 import java.util.LinkedList
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantLock
-import javax.swing.text.html.HTML.Tag.I
 import kotlin.concurrent.withLock
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -91,7 +76,7 @@ fun main(args: Array<String>) {
 }
 
 
-suspend fun handleEchoSession(sessionSocket: AsynchronousSocketChannel) {
+private suspend fun handleEchoSession(sessionSocket: AsynchronousSocketChannel) {
     val sessionId = createSession()
     var echoCount = 0
     sessionSocket.use {
@@ -125,7 +110,7 @@ suspend fun handleEchoSession(sessionSocket: AsynchronousSocketChannel) {
     }
 }
 
-private class AsyncSemaphore(initialUnits: Int) {
+class AsyncSemaphore(initialUnits: Int) {
 
     private var units: Int = initialUnits
     private val guard = ReentrantLock()
