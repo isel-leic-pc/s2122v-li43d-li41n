@@ -12,6 +12,7 @@ import java.nio.channels.AsynchronousServerSocketChannel
 import java.nio.channels.ClosedChannelException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 private val logger = LoggerFactory.getLogger(Server::class.java)
 
@@ -31,9 +32,12 @@ class Server(
 ) {
 
     enum class State { NOT_STARTED, STARTED, STOPPED }
+
+    // Shared mutable state, guarded by [guard]
     private var state = State.NOT_STARTED
     private val guard = Mutex()
 
+    // Immutable data
     private val throttle = AsyncSemaphore(maxSessions)
     private lateinit var serverLoopJob: Job
     private lateinit var serverSocketChannel: AsynchronousServerSocketChannel
@@ -52,12 +56,22 @@ class Server(
 
             serverSocketChannel = createServerChannel(address, executor)
             serverLoopJob = CoroutineScope(executor.asCoroutineDispatcher()).launch {
-                while(isStarted()) {
-                    throttle.acquire().await()
-                    logger.info("Ready to accept connections")
-                    val sessionSocket = serverSocketChannel.suspendingAccept()
-                    sessionManager.createSession(sessionSocket, this)
-                        .start()
+
+                try {
+                    while(isStarted()) {
+                        throttle.acquire().await()
+                        logger.info("Ready to accept connections")
+                        val sessionSocket = serverSocketChannel.suspendingAccept()
+                        sessionManager.createSession(sessionSocket, this)
+                            .start()
+                            .onStop {
+                                throttle.release()
+                                sessionManager.removeSession(it.id)
+                            }
+                    }
+                }
+                catch (ex: ClosedChannelException) {
+                    logger.info("Server is shutting down")
                 }
             }
 
@@ -75,7 +89,17 @@ class Server(
             if (state != State.STARTED)
                 throw IllegalStateException("Server is not started")
 
-            TODO()
+            state = State.STOPPED
         }
+
+        sessionManager.roaster.forEach {
+            it.stop(message)
+        }
+
+        serverSocketChannel.close()
+        serverLoopJob.join()
+
+        executor.shutdown()
+        executor.awaitTermination(0, TimeUnit.MILLISECONDS)
     }
 }

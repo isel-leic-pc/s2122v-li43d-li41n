@@ -305,20 +305,20 @@ For reference:
 * Practical class dedicated to the [third assignment](../docs/assignments/PC_s2122v_SE3.pdf)
 
 ## Week 14   
-### 07/06/2022 - Kotlin coroutines, continued (preview)
+### 07/06/2022 - Kotlin coroutines, continued
 * Kotlin Coroutines, continued
 * Considerations on the structure of software solutions using coroutines, continued
   * Coroutines' orchestration using the _consumer-producer_ pattern
     * [The `Channel` building block](https://kotlinlang.org/docs/channels.html)
 
  For reference:
-  * Lecture video (in Portuguese) _(coming soon)_
+  * [Lecture video (in Portuguese)](https://www.youtube.com/watch?v=HTKewibXsbY&list=PL8XxoCaL3dBiv-3pHZLbFGYsQiJa9X73o&index=20)
 
 ### 09/06/2022 - Laboratory
 * Practical class dedicated to the [third assignment](../docs/assignments/PC_s2122v_SE3.pdf)
 
 ## Week 15   
-### 14/06/2022 - Wrapping up and bónus content (preview)
+### 14/06/2022 - Wrapping up and bonus content (preview)
 * Retrospective on the courses' objectives
 * Bónus content
   * Kotlin Flows, introduction
