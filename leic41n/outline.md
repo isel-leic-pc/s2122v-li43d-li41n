@@ -315,7 +315,7 @@ For reference:
 ## Week 15   
 ### 14/06/2022 - Wrapping up and bonus content (preview)
 * Retrospective on the courses' objectives
-* Bónus content
+* Bonus content
   * Kotlin Flows, introduction
     * Purpose and motivation
     * Basic use cases
@@ -325,5 +325,5 @@ For reference:
   * [Cold flows, hot channels](https://elizarov.medium.com/cold-flows-hot-channels-d74769805f9)
   * [Simple design of Kotlin Flow](https://elizarov.medium.com/simple-design-of-kotlin-flow-4725e7398c4c)
 
-### 16/06/2022 - Hollyday (no classes)
+### 16/06/2022 - Holliday (no classes)
 
