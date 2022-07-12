@@ -1,7 +1,13 @@
 package pt.isel.leic.pc.test1
 
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 /**
@@ -30,12 +36,44 @@ interface ISuspendingExchanger<T> {
  */
 class SuspendingExchangerAsPerMyClasses<T> : ISuspendingExchanger<T> {
 
+    private class WaitingNode<T>(val value: T, val result: CompletableFuture<T>)
+
+    private val guard = ReentrantLock()
+    private var waiting: WaitingNode<T>? = null
+
     private fun internalExchange(value: T): CompletableFuture<T> {
-        TODO()
+        val myWaitingNode = WaitingNode(value, CompletableFuture<T>())
+        val waitingRequest = guard.withLock {
+            val observedWaiting = waiting
+            if (observedWaiting == null) {
+                waiting = myWaitingNode
+                null
+            }
+            else {
+                waiting = null
+                observedWaiting
+            }
+        }
+
+        return if (waitingRequest == null) {
+            myWaitingNode.result
+        }
+        else {
+            waitingRequest.result.complete(value)
+            CompletableFuture.completedFuture(waitingRequest.value)
+        }
     }
 
     override suspend fun exchange(value: T): T {
-        TODO()
+        return suspendCoroutine { continuation ->
+            val future = internalExchange(value)
+            future.whenComplete { value, error ->
+                if (error != null)
+                    continuation.resumeWithException(error)
+                else
+                    continuation.resume(value)
+            }
+        }
     }
 }
 
@@ -45,7 +83,31 @@ class SuspendingExchangerAsPerMyClasses<T> : ISuspendingExchanger<T> {
  */
 class SuspendingExchanger<T> : ISuspendingExchanger<T> {
 
+    private class WaitingNode<T>(val value: T, val continuation: Continuation<T>)
+
+    private val guard = Mutex()
+    private var waiting: WaitingNode<T>? = null
+
     override suspend fun exchange(value: T): T {
-        TODO()
+        try {
+            guard.lock()
+            val observedWaiting = waiting
+            return if (observedWaiting != null) {
+                waiting = null
+                guard.unlock()
+                observedWaiting.continuation.resume(value)
+                observedWaiting.value
+            } else {
+                suspendCoroutine { myContinuation ->
+                    val myNode = WaitingNode(value, myContinuation)
+                    waiting = myNode
+                    guard.unlock()
+                }
+            }
+        }
+        finally {
+            if (guard.isLocked)
+                guard.unlock()
+        }
     }
 }
