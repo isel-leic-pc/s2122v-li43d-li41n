@@ -1,6 +1,8 @@
 package pt.isel.leic.pc.test1
 
 import java.util.concurrent.Executor
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 /**
  * Implement the following function:
@@ -15,5 +17,46 @@ import java.util.concurrent.Executor
  */
 @Suppress("UNCHECKED_CAST")
 fun <A, B, C> run(f0: () -> A, f1: () -> B, f2: (A, B) -> C, executor: Executor): C {
-    TODO()
+
+    class ResultHolder<T> {
+        private var value: T? = null
+        private val guard = ReentrantLock()
+        private val hasResult = guard.newCondition()
+
+        fun publish(value: T) {
+            guard.withLock {
+                this.value = value
+                hasResult.signalAll()
+            }
+        }
+
+        fun awaitResult(): T {
+            guard.withLock {
+                val observedResult = value
+                if (observedResult != null)
+                    return observedResult
+
+                while (true) {
+                    hasResult.await()
+
+                    val obsResult = value
+                    if (obsResult != null)
+                        return obsResult
+                }
+            }
+        }
+    }
+
+    val f0Result = ResultHolder<A>()
+    val f1Result = ResultHolder<B>()
+    executor.execute { f0Result.publish(f0()) }
+    executor.execute { f1Result.publish(f1()) }
+
+    val a = f0Result.awaitResult()
+    val b = f1Result.awaitResult()
+
+    val f2Result = ResultHolder<C>()
+    executor.execute { f2Result.publish(f2(a, b)) }
+
+    return f2Result.awaitResult()
 }
