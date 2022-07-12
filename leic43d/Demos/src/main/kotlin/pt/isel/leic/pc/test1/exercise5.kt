@@ -1,5 +1,12 @@
 package pt.isel.leic.pc.test1
 
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+
 /**
  *  Implement the function with the following signature:
  *
@@ -15,5 +22,33 @@ package pt.isel.leic.pc.test1
  * The following solution leverages default cancellation behaviour.
  */
 suspend fun race(f0: suspend () -> Int, f1: suspend () -> Int): Int {
-    TODO()
+
+    val guard = Mutex()
+    var firstResult: Int? = null
+
+    try {
+        coroutineScope {
+            val parent = this
+            launch {
+                val result = f0()
+                guard.withLock {
+                    if (firstResult == null) {
+                        firstResult = result
+                        parent.cancel()
+                    }
+                }
+            }
+            launch {
+                val result = f1()
+                guard.withLock {
+                    if (firstResult == null) {
+                        firstResult = result
+                        parent.cancel()
+                    }
+                }
+            }
+        }
+    }
+    catch (_: CancellationException) { }
+    return guard.withLock { firstResult as Int }
 }
