@@ -1,5 +1,9 @@
 package pt.isel.leic.pc.test1
 
+import java.util.LinkedList
+import java.util.concurrent.locks.Condition
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 import kotlin.time.Duration
 
 /**
@@ -25,12 +29,72 @@ import kotlin.time.Duration
  */
 class MessageQueue<T> {
 
+    private val queue = LinkedList<T>()
+    private val guard = ReentrantLock()
+
+    private class WaitingNode<T>(val nOfMessages: Int, val condition: Condition) {
+        var messages: List<T>? = null
+    }
+    private val waitingQueue = LinkedList<WaitingNode<T>>()
+
+
     fun enqueue(message: T) {
-        TODO()
+        guard.withLock {
+            queue.addLast(message)
+            maybeSignal()
+        }
     }
 
     @Throws(InterruptedException::class)
     fun tryDequeue(nOfMessages: Int, timeout: Duration): List<T>? {
-        TODO()
+        require(nOfMessages > 0)
+        guard.withLock {
+            if (waitingQueue.isEmpty() && queue.size >= nOfMessages) {
+                val myMessages = LinkedList<T>()
+                repeat(nOfMessages) { myMessages.addLast(queue.removeFirst()) }
+                return myMessages
+            }
+
+            val myNode = WaitingNode<T>(nOfMessages, guard.newCondition())
+            waitingQueue.addLast(myNode)
+            var remainingTime = timeout.inWholeNanoseconds
+
+            try {
+                while (true) {
+
+                    remainingTime = myNode.condition.awaitNanos(remainingTime)
+
+                    val myMessages = myNode.messages
+                    if (myMessages != null)
+                        return myMessages
+
+                    if (remainingTime <= 0) {
+                        waitingQueue.remove(myNode)
+                        maybeSignal()
+                        return null
+                    }
+                }
+            } catch (ie: InterruptedException) {
+
+                if (waitingQueue.remove(myNode)) {
+                    maybeSignal()
+                    throw ie
+                }
+                else {
+                    Thread.currentThread().interrupt()
+                    return myNode.messages
+                }
+            }
+        }
+    }
+
+    private fun maybeSignal() {
+        while(waitingQueue.isNotEmpty() && queue.size >= waitingQueue.first.nOfMessages) {
+            val first = waitingQueue.removeFirst()
+            val myMessages = LinkedList<T>()
+            repeat(first.nOfMessages) { myMessages.addLast(queue.removeFirst()) }
+            first.messages = myMessages
+            first.condition.signal()
+        }
     }
 }
