@@ -28,20 +28,33 @@ import java.util.concurrent.atomic.AtomicInteger
 
 
 // This is an UNSAFE implementation. TODO: Fix it!
-class Value<T>(val value: T, var lives: Int)
+class Value<T>(val value: T, private val initialLives: Int) {
+    val lives = AtomicInteger(initialLives)
+}
+
 
 class Container<T>(private val values: Array<Value<T>>){
 
-    private var index = 0
+    private val index = AtomicInteger(0)
 
     fun consume(): T? {
-        while(index < values.size) {
-            if (values[index].lives > 0) {
-                values[index].lives -= 1
-                return values[index].value
+
+        while(true) {
+            val observedIndex = index.get()
+            if (observedIndex >= values.size)
+                return null
+
+            val observedValue = values[observedIndex]
+            val observedLives = observedValue.lives.get()
+
+            if (observedLives != 0) {
+                if (observedValue.lives.compareAndSet(observedLives, observedLives - 1)) {
+                    return observedValue.value
+                }
             }
-            index += 1
+            else {
+                index.compareAndSet(observedIndex, observedIndex + 1)
+            }
         }
-        return null
     }
 }
